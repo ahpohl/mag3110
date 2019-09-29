@@ -75,7 +75,7 @@ int main(int argc, char** argv)
   time_t timestamp = time(NULL);
   FILE * fp;
   fp = fopen("mag.txt", "a");
-  fprintf(fp, "%lld,%d,%d,%d,%.2f\n", timestamp, xMag, yMag, zMag, sMag);
+  fprintf(fp, "%ld,%d,%d,%d,%.2f\n", timestamp, xMag, yMag, zMag, sMag);
   fclose(fp);
 
   return EXIT_SUCCESS;
