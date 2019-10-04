@@ -1,5 +1,5 @@
-#!/usr/bin/python -u
-import smbus
+#!/usr/bin/python2 -u
+import smbus2
 import time
 import math
 import rrdtool
@@ -9,9 +9,9 @@ import argparse
 
 # Global data
 # I2C bus (1 at newer Raspberry Pi, older models use 0)
-bus = smbus.SMBus(1)
-# I2C address of HMC5883
-address = 0x1e
+bus = smbus2.SMBus(1)
+# I2C address of MAG3110
+address = 0x0E
 
 # Trigger level and hysteresis
 trigger_level = 1000
@@ -25,9 +25,9 @@ count_rrd = "%s/count.rrd" % (os.path.dirname(os.path.abspath(__file__)))
 # Path to RRD with magnetometer values (for testing and calibration only)
 mag_rrd = "%s/mag.rrd" % (os.path.dirname(os.path.abspath(__file__)))
 
-# Read block data from HMC5883
+# Read block data from MAG3110
 def read_data():
-  return bus.read_i2c_block_data(address, 0x00)
+  return bus.read_i2c_block_data(address, 0x00, 6)
 
 # Convert val to signed value
 def twos_complement(val, len):
@@ -39,7 +39,7 @@ def twos_complement(val, len):
 def convert_sw(data, offset):
   return twos_complement(data[offset] << 8 | data[offset+1], 16)
 
-# Write one byte to HMC5883
+# Write one byte to MAG3110
 def write_byte(adr, value):
   bus.write_byte_data(address, adr, value)
 
@@ -107,7 +107,7 @@ def write_mag_rrd(bx, by, bz):
 # Main
 def main():
   # Check command args
-  parser = argparse.ArgumentParser(description='Program to read the gas counter value by using the digital magnetometer HMC5883.')
+  parser = argparse.ArgumentParser(description='Program to read the gas counter value by using the digital magnetometer MAG3110.')
   parser.add_argument('-c', '--create', action='store_true', default=False, help='Create rrd databases if necessary')
   parser.add_argument('-m', '--magnetometer', action='store_true', default=False, help='Store values of magnetic induction into mag rrd')
   args = parser.parse_args()
@@ -115,10 +115,10 @@ def main():
   if args.create:
     create_rrds()
 
-  # Init HMC5883
-  write_byte(0, 0b01110000) # Rate: 8 samples @ 15Hz
-  write_byte(1, 0b11100000) # Sensor field range: 8.1 Ga
-  write_byte(2, 0b00000000) # Mode: Continuous sampling
+  # Init MAG3110
+  #write_byte(0, 0b01110000) # Rate: 8 samples @ 15Hz
+  #write_byte(1, 0b11100000) # Sensor field range: 8.1 Ga
+  #write_byte(2, 0b00000000) # Mode: Continuous sampling
 
   trigger_state = 0
   timestamp = time.time()
@@ -126,7 +126,7 @@ def main():
   print "restoring counter to %f" % counter
 
   while(1==1):
-    # read data from HMC5883
+    # read data from MAG3110
     data = read_data()
   
     # get x,y,z values of magnetic induction
