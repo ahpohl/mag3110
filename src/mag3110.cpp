@@ -1,7 +1,7 @@
 #include "mag3110.hpp"
 #include <cmath>
 
-#define CALIBRATION_TIMEOUT 5000 //timeout in milliseconds
+#define CALIBRATION_TIMEOUT 5000 // ms
 #define DEG_PER_RAD (180.0/3.14159265358979)
 
 MAG3110::MAG3110()
@@ -12,10 +12,17 @@ MAG3110::MAG3110()
 	y_scale = 0.0f;
 }
 
-bool MAG3110::initialize() {
-
+bool MAG3110::initialize(void)
+{
+  m_i2cbus = "/dev/i2c-1";
+  if ((m_fd = open(m_i2cbus, O_RDWR)) < 0) {
+    throw runtime_error("Failed to open the bus.");
+  }
+  if ((ioctl(m_fd, I2C_SLAVE, MAG3110_I2C_ADDRESS)) < 0) {
+    throw runtime_error("Failed to access the bus.");
+  }
 	if(readRegister(MAG3110_WHO_AM_I) != MAG3110_WHO_AM_I_RSP) {
-		cout << "Could not find MAG3110 connected!" << endl;;
+		cout << "Could not find MAG3110 connected!" << endl;
 		return false;
 	} else {
 		reset();
@@ -26,6 +33,8 @@ bool MAG3110::initialize() {
 uint8_t MAG3110::readRegister(uint8_t address)
 {
   uint8_t output;
+
+  /*
   Wire.beginTransmission(MAG3110_I2C_ADDRESS);
   Wire.write(address);
   Wire.endTransmission();
@@ -35,6 +44,10 @@ uint8_t MAG3110::readRegister(uint8_t address)
   {
 	  output = Wire.read();
   }
+  */
+
+  
+
   return output;
 }
 
