@@ -107,16 +107,18 @@ public:
   void initialize(const char* t_bus);
   uint8_t readRegister(uint8_t const& t_addr) const;
   void writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const;
-  void reset(void);
   void enterStandby(void);
   void exitStandby(void);
   void setOffset(uint8_t const& t_axis, int const& t_offset) const;
   int readOffset(uint8_t const& t_axis) const; 
-  bool dataReady(void) const;
+  void reset(void);
   void readMag(int* t_x, int* t_y, int* t_z) const; 
   void readMicroTesla(double* t_x, double* t_y, double* t_z) const;
+  double getMagnitude(double const& t_x, double const& t_y, 
+    double const& t_z) const;
 
-  float readHeading(void);
+  bool dataReady(void) const;
+  double readHeading(void);
   void setDR_OS(uint8_t t_DROS);
   void triggerMeasurement(void);
   void rawData(bool t_raw);

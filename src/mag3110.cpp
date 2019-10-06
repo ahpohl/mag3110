@@ -77,6 +77,45 @@ void MAG3110::writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const
   }
 }
 
+void MAG3110::enterStandby(void)
+{
+  m_activeMode = false;
+  uint8_t reg = readRegister(MAG3110_CTRL_REG1);
+  writeRegister(MAG3110_CTRL_REG1, (reg & ~(0x03)));
+}
+
+void MAG3110::exitStandby(void)
+{
+  m_activeMode = true;
+  uint8_t reg = readRegister(MAG3110_CTRL_REG1);
+  writeRegister(MAG3110_CTRL_REG1, (reg | MAG3110_ACTIVE_MODE));
+}
+
+int MAG3110::readAxis(uint8_t const& t_axis) const
+{
+  uint8_t msbAddr = t_axis + 0x08;
+  uint8_t lsbAddr = msbAddr + 0x01;
+  uint8_t msb = readRegister(msbAddr);
+  uint8_t lsb = readRegister(lsbAddr);
+  int res = static_cast<int16_t>(lsb | (msb << 8));
+
+  return res;
+}
+
+void MAG3110::setOffset(uint8_t const& t_axis, int const& t_offset) const
+{
+  // msb bits [14:7], lsb bits [6:0]
+  uint8_t msbAddr = t_axis + 0x08;
+  uint8_t lsbAddr = msbAddr + 0x01;
+  writeRegister(msbAddr, ((t_offset >> 7) & 0xFF));
+  writeRegister(lsbAddr, ((t_offset << 1) & 0xFF));
+}
+
+int MAG3110::readOffset(uint8_t const& t_axis) const
+{
+  return (readAxis(t_axis + 0x08) >> 1);
+}
+
 void MAG3110::reset(void)
 {
   enterStandby();
@@ -89,53 +128,6 @@ void MAG3110::reset(void)
   setOffset(MAG3110_X_AXIS, 0);
   setOffset(MAG3110_Y_AXIS, 0);
   setOffset(MAG3110_Z_AXIS, 0);
-}
-
-void MAG3110::enterStandby(void)
-{
-  m_activeMode = false;
-  uint8_t current = readRegister(MAG3110_CTRL_REG1);
-  writeRegister(MAG3110_CTRL_REG1, (current & ~(0x03)));
-}
-
-void MAG3110::exitStandby(void)
-{
-  m_activeMode = true;
-  uint8_t reg = readRegister(MAG3110_CTRL_REG1);
-  writeRegister(MAG3110_CTRL_REG1, (reg | MAG3110_ACTIVE_MODE));
-}
-
-void MAG3110::setOffset(uint8_t const& t_axis, int const& t_offset) const
-{
-  // msb bits [14:7] and lsb bits [6:0] of user [x,y,z]-offset
-  uint8_t offset = t_offset << 1;
-  uint8_t msbAddress = t_axis + 0x08;
-  uint8_t lsbAddress = msbAddress + 0x01;
-  writeRegister(msbAddress, ((offset >> 8) & 0xFF));
-  writeRegister(lsbAddress, (offset & 0xFF));
-}
-
-int MAG3110::readOffset(uint8_t const& t_axis) const
-{
-  return (readAxis(t_axis + 0x08)) >> 1;
-}
-
-int MAG3110::readAxis(uint8_t const& t_axis) const
-{
-  uint8_t lsbAddress = 0, msbAddress = 0;
-  uint8_t lsb = 0, msb = 0;
-  msbAddress = t_axis;
-  lsbAddress = t_axis + 0x01;
-  msb = readRegister(msbAddress);
-  lsb = readRegister(lsbAddress);
-  int16_t res = (lsb | (msb << 8));
-
-  return static_cast<int>(res);
-}
-
-bool MAG3110::dataReady(void) const
-{
-	return ((readRegister(MAG3110_DR_STATUS) & 0x08) >> 3);
 }
 
 void MAG3110::readMag(int* t_x, int* t_y, int* t_z) const
@@ -166,7 +158,18 @@ void MAG3110::readMicroTesla(double* t_x, double* t_y, double* t_z) const
 	*t_z = z * 0.1f;
 }
 
-float MAG3110::readHeading(void)
+double MAG3110::getMagnitude(double const& t_x, double const& t_y, 
+    double const& t_z) const
+{
+  return sqrt(pow(t_x, 2.0) + pow(t_y, 2.0) + pow(t_z, 2.0));
+}
+
+bool MAG3110::dataReady(void) const
+{
+  return ((readRegister(MAG3110_DR_STATUS) & 0x08) >> 3);
+}
+
+double MAG3110::readHeading(void)
 {
   /*
 	int x, y, z;
