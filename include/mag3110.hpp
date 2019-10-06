@@ -102,6 +102,7 @@ class MAG3110
 {
 public:
   MAG3110(void);
+  ~MAG3110(void);
   bool initialize(void);
   uint8_t readRegister(uint8_t t_addr);
   void writeRegister(uint8_t t_addr, uint8_t t_val);
@@ -132,7 +133,7 @@ public:
   bool calibrated;
 
 private:
-  char const* m_i2cbus;
+  char const* m_bus;
   int m_fd;
   int m_xoffset;
   int m_yoffset;

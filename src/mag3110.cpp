@@ -19,14 +19,21 @@ MAG3110::MAG3110(void)
 	y_scale = 0.0f;
 }
 
+MAG3110::~MAG3110(void)
+{
+  if (m_fd) {
+    close(m_fd);
+  }
+}
+
 bool MAG3110::initialize(void)
 {
-  m_i2cbus = "/dev/i2c-1";
-  if ((m_fd = open(m_i2cbus, O_RDWR)) < 0) {
-    throw runtime_error("Failed to open the bus.");
+  m_bus = "/dev/i2c-1";
+  if ((m_fd = open(m_bus, O_RDWR)) < 0) {
+    throw runtime_error(string("Failed to open I2C bus ") + m_bus);
   }
   if ((ioctl(m_fd, I2C_SLAVE, MAG3110_I2C_ADDRESS)) < 0) {
-    throw runtime_error("Failed to access the bus.");
+    throw runtime_error(string("Failed to access I2C bus ") + m_bus);
   }
 	if(readRegister(MAG3110_WHO_AM_I) != MAG3110_WHO_AM_I_RSP) {
 		cout << "Could not find MAG3110 connected!" << endl;
