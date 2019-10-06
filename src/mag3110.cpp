@@ -15,7 +15,7 @@ using namespace std;
 
 MAG3110::MAG3110(void)
 {
-  m_debug = 1;
+  m_debug = false;
 	m_xoffset = 0;
 	m_yoffset = 0;
 	x_scale = 0.0f;
@@ -27,6 +27,11 @@ MAG3110::~MAG3110(void)
   if (m_fd) {
     close(m_fd);
   }
+}
+
+void MAG3110::setDebug(void)
+{
+  m_debug = true;
 }
 
 void MAG3110::initialize(const char* t_bus)
@@ -152,15 +157,13 @@ void MAG3110::readMag(int* t_x, int* t_y, int* t_z) const
 	*t_z = static_cast<int16_t>(((val[4] & 0xFF) << 8) | (val[5] & 0xFF));
 }
 
-void MAG3110::readMicroTeslas(float* t_x, float* t_y, float* t_z)
+void MAG3110::readMicroTesla(double* t_x, double* t_y, double* t_z) const
 {
-  /*
-	int x_int, y_int, z_int;
-	readMag(&x_int, &y_int, &z_int);
-	*x = (float) x_int * 0.1f;
-	*y = (float) y_int * 0.1f;
-	*z = (float) z_int * 0.1f;
-  */
+	int x, y, z;
+	readMag(&x, &y, &z);
+	*t_x = x * 0.1f;
+	*t_y = y * 0.1f;
+	*t_z = z * 0.1f;
 }
 
 float MAG3110::readHeading(void)

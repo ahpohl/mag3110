@@ -103,6 +103,7 @@ class MAG3110
 public:
   MAG3110(void);
   ~MAG3110(void);
+  void setDebug(void);
   void initialize(const char* t_bus);
   uint8_t readRegister(uint8_t const& t_addr) const;
   void writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const;
@@ -112,9 +113,9 @@ public:
   void setOffset(uint8_t const& t_axis, int const& t_offset) const;
   int readOffset(uint8_t const& t_axis) const; 
   bool dataReady(void) const;
-  void readMag(int* t_x, int* t_y, int* t_z) const;
-  
-  void readMicroTeslas(float* t_x, float* t_y, float* t_z);
+  void readMag(int* t_x, int* t_y, int* t_z) const; 
+  void readMicroTesla(double* t_x, double* t_y, double* t_z) const;
+
   float readHeading(void);
   void setDR_OS(uint8_t t_DROS);
   void triggerMeasurement(void);
