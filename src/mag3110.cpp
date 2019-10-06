@@ -40,8 +40,8 @@ bool MAG3110::initialize(void)
 uint8_t MAG3110::readRegister(uint8_t t_addr)
 {
   uint8_t res;
-  write(m_fd, t_addr, 1);
-  read(m_fd, res, 1);
+  write(m_fd, &t_addr, 1);
+  read(m_fd, &res, 1);
 
   return res;
 }
