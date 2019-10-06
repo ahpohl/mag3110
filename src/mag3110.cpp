@@ -128,30 +128,28 @@ int MAG3110::readAxis(uint8_t const& t_axis) const
   return static_cast<int>(res);
 }
 
-bool MAG3110::dataReady(void)
+bool MAG3110::dataReady(void) const
 {
-	return ((readRegister(MAG3110_DR_STATUS) & 0x8) >> 3);
+	return ((readRegister(MAG3110_DR_STATUS) & 0x08) >> 3);
 }
 
-void MAG3110::readMag(int* t_x, int* t_y, int* t_z)
+void MAG3110::readMag(int* t_x, int* t_y, int* t_z) const
 {
-  /*
-	Wire.beginTransmission(MAG3110_I2C_ADDRESS);
-	Wire.write(MAG3110_OUT_X_MSB);
-	Wire.endTransmission();
-	delayMicroseconds(2);
-	Wire.requestFrom(MAG3110_I2C_ADDRESS, 6);
-	
-  uint16_t values[3];
-	for(uint8_t idx = 0; idx <= 2; idx++)
+  const int LEN = 1;
+  if (write(m_fd, &MAG3110_OUT_X_MSB, LEN) != LEN) {
+    throw runtime_error("Failed to write to the i2c bus");
+  }
+  const int BYTES = 6;
+  uint16_t val[BYTES] = {0};
+	for (uint8_t i = 0; i < BYTES; ++i)
 	{
-		values[idx]  = Wire.read() << 8;	// MSB
-		values[idx] |= Wire.read();       // LSB
-	}
-	*x = (int) values[0];
-	*y = (int) values[1];
-	*z = (int) values[2];
-  */
+    if (read(m_fd, &val[i], LEN) != LEN) {
+      throw runtime_error("Failed to read from the i2c bus");
+    }
+  }
+	*t_x = static_cast<int16_t>(((val[0] & 0xFF) << 8) | (val[1] & 0xFF));
+	*t_y = static_cast<int16_t>(((val[2] & 0xFF) << 8) | (val[3] & 0xFF));
+	*t_z = static_cast<int16_t>(((val[4] & 0xFF) << 8) | (val[5] & 0xFF));
 }
 
 void MAG3110::readMicroTeslas(float* t_x, float* t_y, float* t_z)

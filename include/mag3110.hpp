@@ -111,9 +111,9 @@ public:
   void exitStandby(void);
   void setOffset(uint8_t const& t_axis, int const& t_offset) const;
   int readOffset(uint8_t const& t_axis) const; 
-
-  bool dataReady(void);
-  void readMag(int* t_x, int* t_y, int* t_z);
+  bool dataReady(void) const;
+  void readMag(int* t_x, int* t_y, int* t_z) const;
+  
   void readMicroTeslas(float* t_x, float* t_y, float* t_z);
   float readHeading(void);
   void setDR_OS(uint8_t t_DROS);
