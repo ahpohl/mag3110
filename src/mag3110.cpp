@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include "mag3110.hpp"
 
@@ -17,6 +19,7 @@ MAG3110::MAG3110(void)
 	m_yoffset = 0;
 	x_scale = 0.0f;
 	y_scale = 0.0f;
+  m_debug = 1;
 }
 
 MAG3110::~MAG3110(void)
@@ -26,30 +29,32 @@ MAG3110::~MAG3110(void)
   }
 }
 
-bool MAG3110::initialize(void)
+void MAG3110::initialize(void)
 {
   m_bus = "/dev/i2c-1";
   if ((m_fd = open(m_bus, O_RDWR)) < 0) {
-    throw runtime_error(string("Failed to open I2C bus ") + m_bus);
+    throw runtime_error(string("Failed to open I2C bus ") + m_bus + ": "
+      + strerror(errno) + " (" + to_string(errno) + ")");
   }
   if ((ioctl(m_fd, I2C_SLAVE, MAG3110_I2C_ADDRESS)) < 0) {
-    throw runtime_error(string("Failed to access I2C bus ") + m_bus);
+    throw runtime_error("Failed to acquire bus access and/or talk to slave");
   }
-	if(readRegister(MAG3110_WHO_AM_I) != MAG3110_WHO_AM_I_RSP) {
-		cout << "Could not find MAG3110 connected!" << endl;
-		return false;
-	} else {
-		reset();
-		return true;
+	if (readRegister(MAG3110_WHO_AM_I) != MAG3110_WHO_AM_I_RSP) {
+		throw runtime_error("Failed to find MAG3110 connected");
 	}
+  reset();
 }
 
 uint8_t MAG3110::readRegister(uint8_t t_addr)
 {
   uint8_t res;
-  write(m_fd, &t_addr, 1);
-  read(m_fd, &res, 1);
-
+  int len = 1;
+  if (write(m_fd, &t_addr, len) != len) {
+    throw runtime_error("Failed to write to the i2c bus");
+  }
+  if (read(m_fd, &res, len) != len) {
+    throw runtime_error("Failed to read from the i2c bus");
+  }
   return res;
 }
 

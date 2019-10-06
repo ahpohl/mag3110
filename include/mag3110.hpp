@@ -82,15 +82,15 @@ const int MAG3110_ACTIVE_MODE =			    0x01;
 const int MAG3110_STANDBY_MODE =		    0x00;
 
 // CTRL_REG2 Settings
-const int MAG3110_AUTO_MRST_EN =    0x80;
-const int MAG3110_RAW_MODE = 			  0x20;
-const int MAG3110_NORMAL_MODE	=	    0x00;
-const int MAG3110_MAG_RST =		      0x10;
+const int MAG3110_AUTO_MRST_EN = 0x80;
+const int MAG3110_RAW_MODE = 	   0x20;
+const int MAG3110_NORMAL_MODE	=	 0x00;
+const int MAG3110_MAG_RST =		   0x10;
 
 // SYSMOD Readings
-const int MAG3110_SYSMOD_STANDBY =     0x00;
-const int MAG3110_SYSMOD_ACTIVE_RAW =	 0x01;
-const int	MAG3110_SYSMOD_ACTIVE	=	     0x02;
+const int MAG3110_SYSMOD_STANDBY =    0x00;
+const int MAG3110_SYSMOD_ACTIVE_RAW =	0x01;
+const int	MAG3110_SYSMOD_ACTIVE	=	    0x02;
 const int MAG3110_X_AXIS = 1;
 const int MAG3110_Y_AXIS = 3;
 const int MAG3110_Z_AXIS = 5;
@@ -103,7 +103,7 @@ class MAG3110
 public:
   MAG3110(void);
   ~MAG3110(void);
-  bool initialize(void);
+  void initialize(void);
   uint8_t readRegister(uint8_t t_addr);
   void writeRegister(uint8_t t_addr, uint8_t t_val);
   bool dataReady(void);
@@ -133,6 +133,7 @@ public:
   bool calibrated;
 
 private:
+  bool m_debug;
   char const* m_bus;
   int m_fd;
   int m_xoffset;
