@@ -91,9 +91,9 @@ const int MAG3110_MAG_RST =		   0x10;
 const int MAG3110_SYSMOD_STANDBY =    0x00;
 const int MAG3110_SYSMOD_ACTIVE_RAW =	0x01;
 const int	MAG3110_SYSMOD_ACTIVE	=	    0x02;
-const int MAG3110_X_AXIS = 1;
-const int MAG3110_Y_AXIS = 3;
-const int MAG3110_Z_AXIS = 5;
+const int MAG3110_X_AXIS =            0x01;
+const int MAG3110_Y_AXIS =            0x03;
+const int MAG3110_Z_AXIS =            0x05;
 
 const int CALIBRATION_TIMEOUT = 5000; // ms
 const double DEG_PER_RAD = (180.0 / 3.14159265358979);
@@ -103,9 +103,15 @@ class MAG3110
 public:
   MAG3110(void);
   ~MAG3110(void);
-  void initialize(void);
-  uint8_t readRegister(uint8_t t_addr);
-  void writeRegister(uint8_t t_addr, uint8_t t_val);
+  void initialize(const char* t_bus);
+  uint8_t readRegister(uint8_t const& t_addr) const;
+  void writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const;
+  void reset(void);
+  void enterStandby(void);
+  void exitStandby(void);
+  void setOffset(uint8_t const& t_axis, int const& t_offset) const;
+  int readOffset(uint8_t const& t_axis) const; 
+
   bool dataReady(void);
   void readMag(int* t_x, int* t_y, int* t_z);
   void readMicroTeslas(float* t_x, float* t_y, float* t_z);
@@ -113,11 +119,7 @@ public:
   void setDR_OS(uint8_t t_DROS);
   void triggerMeasurement(void);
   void rawData(bool t_raw);
-  void setOffset(uint8_t t_axis, int t_offset);
-  int readOffset(uint8_t t_axis);
   void start(void);
-  void enterStandby(void);
-  void exitStandby(void);
   bool isActive(void);
   bool isRaw(void);
   bool isCalibrated(void);
@@ -126,15 +128,15 @@ public:
   void enterCalMode(void);
   void calibrate(void);
   void exitCalMode(void);
-  void reset(void);
   bool error;
   float x_scale;
   float y_scale;
-  bool calibrated;
+
+protected:
+  int readAxis(uint8_t const& t_axis) const;
 
 private:
   bool m_debug;
-  char const* m_bus;
   int m_fd;
   int m_xoffset;
   int m_yoffset;
@@ -146,7 +148,7 @@ private:
   bool m_calibrationMode;
   bool m_activeMode;
   bool m_rawMode;
-  int readAxis(uint8_t t_axis);
+  bool m_calibrated;
 };
 
 #endif // MAG3110_HPP

@@ -15,11 +15,11 @@ using namespace std;
 
 MAG3110::MAG3110(void)
 {
+  m_debug = 1;
 	m_xoffset = 0;
 	m_yoffset = 0;
 	x_scale = 0.0f;
 	y_scale = 0.0f;
-  m_debug = 1;
 }
 
 MAG3110::~MAG3110(void)
@@ -29,43 +29,103 @@ MAG3110::~MAG3110(void)
   }
 }
 
-void MAG3110::initialize(void)
+void MAG3110::initialize(const char* t_bus)
 {
-  m_bus = "/dev/i2c-1";
-  if ((m_fd = open(m_bus, O_RDWR)) < 0) {
-    throw runtime_error(string("Failed to open I2C bus ") + m_bus + ": "
+  int res = 0, rsp = 0;
+  if ((m_fd = open(t_bus, O_RDWR)) < 0) {
+    throw runtime_error(string("Failed to open I2C bus ") + t_bus + ": "
       + strerror(errno) + " (" + to_string(errno) + ")");
   }
-  if ((ioctl(m_fd, I2C_SLAVE, MAG3110_I2C_ADDRESS)) < 0) {
+  if ((res = ioctl(m_fd, I2C_SLAVE, MAG3110_I2C_ADDRESS)) < 0) {
     throw runtime_error("Failed to acquire bus access and/or talk to slave");
   }
-	if (readRegister(MAG3110_WHO_AM_I) != MAG3110_WHO_AM_I_RSP) {
+	if ((rsp = readRegister(MAG3110_WHO_AM_I)) != MAG3110_WHO_AM_I_RSP) {
 		throw runtime_error("Failed to find MAG3110 connected");
 	}
   reset();
+  if (m_debug) {
+    cout << "Initialization successful" << endl;
+  }
 }
 
-uint8_t MAG3110::readRegister(uint8_t t_addr)
+uint8_t MAG3110::readRegister(uint8_t const& t_addr) const
 {
   uint8_t res;
-  int len = 1;
-  if (write(m_fd, &t_addr, len) != len) {
+  const int LEN = 1;
+  if (write(m_fd, &t_addr, LEN) != LEN) {
     throw runtime_error("Failed to write to the i2c bus");
   }
-  if (read(m_fd, &res, len) != len) {
+  if (read(m_fd, &res, LEN) != LEN) {
     throw runtime_error("Failed to read from the i2c bus");
   }
   return res;
 }
 
-void MAG3110::writeRegister(uint8_t addr, uint8_t val)
+void MAG3110::writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const
 {
-  /*
-  Wire.beginTransmission(MAG3110_I2C_ADDRESS);
-  Wire.write(address);
-  Wire.write(value);
-  Wire.endTransmission();
-  */
+  const int LEN = 2;
+  uint8_t data[LEN] = {0};
+  data[0] = t_addr;
+  data[1] = t_val;
+  if (write(m_fd, data, LEN) != LEN) {
+    throw runtime_error("Failed to write to the i2c bus");
+  }
+}
+
+void MAG3110::reset(void)
+{
+  enterStandby();
+  writeRegister(MAG3110_CTRL_REG1, 0x00);
+  writeRegister(MAG3110_CTRL_REG2, 0x80);
+  m_calibrationMode = false;
+  m_activeMode = false;
+  m_rawMode = false;
+  m_calibrated = false;
+  setOffset(MAG3110_X_AXIS, 0);
+  setOffset(MAG3110_Y_AXIS, 0);
+  setOffset(MAG3110_Z_AXIS, 0);
+}
+
+void MAG3110::enterStandby(void)
+{
+  m_activeMode = false;
+  uint8_t current = readRegister(MAG3110_CTRL_REG1);
+  writeRegister(MAG3110_CTRL_REG1, (current & ~(0x03)));
+}
+
+void MAG3110::exitStandby(void)
+{
+  m_activeMode = true;
+  uint8_t reg = readRegister(MAG3110_CTRL_REG1);
+  writeRegister(MAG3110_CTRL_REG1, (reg | MAG3110_ACTIVE_MODE));
+}
+
+void MAG3110::setOffset(uint8_t const& t_axis, int const& t_offset) const
+{
+  // msb bits [14:7] and lsb bits [6:0] of user [x,y,z]-offset
+  uint8_t offset = t_offset << 1;
+  uint8_t msbAddress = t_axis + 0x08;
+  uint8_t lsbAddress = msbAddress + 0x01;
+  writeRegister(msbAddress, ((offset >> 8) & 0xFF));
+  writeRegister(lsbAddress, (offset & 0xFF));
+}
+
+int MAG3110::readOffset(uint8_t const& t_axis) const
+{
+  return (readAxis(t_axis + 0x08)) >> 1;
+}
+
+int MAG3110::readAxis(uint8_t const& t_axis) const
+{
+  uint8_t lsbAddress = 0, msbAddress = 0;
+  uint8_t lsb = 0, msb = 0;
+  msbAddress = t_axis;
+  lsbAddress = t_axis + 0x01;
+  msb = readRegister(msbAddress);
+  lsb = readRegister(lsbAddress);
+  int16_t res = (lsb | (msb << 8));
+
+  return static_cast<int>(res);
 }
 
 bool MAG3110::dataReady(void)
@@ -155,48 +215,10 @@ void MAG3110::rawData(bool t_raw)
   */
 }
 
-void MAG3110::setOffset(uint8_t t_axis, int t_offset)
-{
-  /*
-	offset = offset << 1;	
-	uint8_t msbAddress = axis + 8;
-	uint8_t lsbAddress = msbAddress + 1;
-	writeRegister(msbAddress, (uint8_t)((offset >> 8) & 0xFF));
-	delay(15);
-	writeRegister(lsbAddress, (uint8_t) offset & 0xFF);
-  */
-}
-
-int MAG3110::readOffset(uint8_t t_axis)
-{
-  /*
-	return (readAxis(axis+8)) >> 1;
-  */
-  return 0;
-}
-
 void MAG3110::start(void)
 {
   /*
 	exitStandby();
-  */
-}
-
-void MAG3110::enterStandby(void)
-{
-  /*
-	activeMode = false;
-	uint8_t current = readRegister(MAG3110_CTRL_REG1);
-	writeRegister(MAG3110_CTRL_REG1, (current & ~(0x3)));
-  */
-}
-
-void MAG3110::exitStandby(void)
-{
-  /*
-	activeMode = true;
-	uint8_t current = readRegister(MAG3110_CTRL_REG1);
-	writeRegister(MAG3110_CTRL_REG1, (current | MAG3110_ACTIVE_MODE));
   */
 }
 
@@ -212,7 +234,7 @@ bool MAG3110::isRaw(void)
 
 bool MAG3110::isCalibrated(void)
 {
-	return calibrated;
+	return m_calibrated;
 }
 
 bool MAG3110::isCalibrating(void)
@@ -290,36 +312,4 @@ void MAG3110::exitCalMode(void)
 	calibrated = true;
   */
 	//enterStandby();
-}
-
-void MAG3110::reset(void)
-{
-  /*
-	enterStandby();
-	writeRegister(MAG3110_CTRL_REG1, 0x00);
-	writeRegister(MAG3110_CTRL_REG2, 0x80);	
-	calibrationMode = false;
-	activeMode = false;
-	rawMode = false;
-	calibrated = false;
-	setOffset(MAG3110_X_AXIS, 0);
-	setOffset(MAG3110_Y_AXIS, 0);
-	setOffset(MAG3110_Z_AXIS, 0);
-  */
-}
-
-int MAG3110::readAxis(uint8_t t_axis)
-{
-  /*
-	uint8_t lsbAddress, msbAddress;
-	uint8_t lsb, msb;
-	msbAddress = axis;
-	lsbAddress = axis+1;
-	msb = readRegister(msbAddress);
-	delayMicroseconds(2);
-	lsb = readRegister(lsbAddress);
-	int16_t out = (lsb | (msb << 8));
-	return (int)out;
-  */
-  return 0;
 }
