@@ -6,8 +6,9 @@ using namespace std;
 int main(int argc, char** argv)
 {
   MAG3110 mySensor;
-
   mySensor.initialize("/dev/i2c-1");
+  mySensor.start();
+
   double x, y, z;
   mySensor.readMicroTesla(&x, &y, &z);
   double mag = mySensor.getMagnitude(x, y, z);
