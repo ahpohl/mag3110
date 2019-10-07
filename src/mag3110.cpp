@@ -91,6 +91,11 @@ void MAG3110::exitStandby(void)
   writeRegister(MAG3110_CTRL_REG1, (reg | MAG3110_ACTIVE_MODE));
 }
 
+void MAG3110::start(void)
+{
+  exitStandby();
+}
+
 int MAG3110::readAxis(uint8_t const& t_axis) const
 {
   uint8_t msbAddr = t_axis + 0x08;
@@ -216,13 +221,6 @@ void MAG3110::rawData(bool t_raw)
 		rawMode = false;
 		writeRegister(MAG3110_CTRL_REG2, MAG3110_AUTO_MRST_EN & ~(0x01 << 5));
 	}
-  */
-}
-
-void MAG3110::start(void)
-{
-  /*
-	exitStandby();
   */
 }
 

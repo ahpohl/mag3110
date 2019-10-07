@@ -109,6 +109,7 @@ public:
   void writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const;
   void enterStandby(void);
   void exitStandby(void);
+  void start(void);  
   void setOffset(uint8_t const& t_axis, int const& t_offset) const;
   int readOffset(uint8_t const& t_axis) const; 
   void reset(void);
@@ -122,7 +123,6 @@ public:
   void setDR_OS(uint8_t t_DROS);
   void triggerMeasurement(void);
   void rawData(bool t_raw);
-  void start(void);
   bool isActive(void);
   bool isRaw(void);
   bool isCalibrated(void);
