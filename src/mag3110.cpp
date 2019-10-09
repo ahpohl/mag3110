@@ -98,8 +98,8 @@ void MAG3110::start(void)
 
 int MAG3110::readAxis(uint8_t const& t_axis) const
 {
-  uint8_t msbAddr = t_axis + 0x08;
-  uint8_t lsbAddr = msbAddr + 0x01;
+  uint8_t msbAddr = t_axis;
+  uint8_t lsbAddr = t_axis + 0x01;
   uint8_t msb = readRegister(msbAddr);
   uint8_t lsb = readRegister(lsbAddr);
   int res = static_cast<int16_t>(lsb | (msb << 8));
@@ -112,8 +112,8 @@ void MAG3110::setOffset(uint8_t const& t_axis, int const& t_offset) const
   // msb bits [14:7], lsb bits [6:0]
   uint8_t msbAddr = t_axis + 0x08;
   uint8_t lsbAddr = msbAddr + 0x01;
-  writeRegister(msbAddr, ((t_offset >> 7) & 0xFF));
-  writeRegister(lsbAddr, ((t_offset << 1) & 0xFF));
+  writeRegister(msbAddr, static_cast<uint8_t>((t_offset >> 7) & 0xFF));
+  writeRegister(lsbAddr, static_cast<uint8_t>((t_offset << 1) & 0xFF));
 }
 
 int MAG3110::readOffset(uint8_t const& t_axis) const
