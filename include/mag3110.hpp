@@ -1,7 +1,7 @@
 #ifndef MAG3110_HPP
 #define MAG3110_HPP
 #include <cstdint>
-
+#include <cmath>
 
 class MAG3110
 {
@@ -9,7 +9,7 @@ public:
   static uint8_t const MAG3110_I2C_ADDRESS = 0x0E;
   static uint8_t const MAG3110_WHO_AM_I_RSP = 0xC4;
   static int const CALIBRATION_TIMEOUT = 10000; // ms
-  static double const DEG_PER_RAD = (180.0/3.14159265358979);
+  static double constexpr DEG_PER_RAD = (180.0 / 3.14159265358979);
   
   // register addresses
   static uint8_t const MAG3110_DR_STATUS = 0x00;
