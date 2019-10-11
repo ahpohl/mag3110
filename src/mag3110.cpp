@@ -276,7 +276,6 @@ void MAG3110::setRawMode(bool const t_raw)
 
 void MAG3110::calibrate(void)
 {
-  m_calibrated = false;
   int xmin = 0x7FFF, xmax = -0x8000;
   int ymin = 0x7FFF, ymax = -0x8000;
   int zmin = 0x7FFF, zmax = -0x8000;
@@ -309,6 +308,7 @@ void MAG3110::calibrate(void)
 	m_xscale = 1.0 / (xmax - xmin);
 	m_yscale = 1.0 / (ymax - ymin);
 	setRawMode(false);
+  m_calibrated = true;
 }
 
 double MAG3110::getHeading(void)

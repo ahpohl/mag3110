@@ -12,10 +12,9 @@ int main(int argc, char** argv)
   MAG3110 mySensor;
   mySensor.setDebug();
   mySensor.initialize("/dev/i2c-1");
+  mySensor.reset();
   mySensor.calibrate();
-  if (mySensor.isCalibrated()) {
-    cout << "Calibration successful" << endl;
-  }
+  
   int xoff, yoff, zoff;
   mySensor.getOffset(&xoff, &yoff, &zoff);
   cout << "Offset: " << xoff << ", " << yoff << ", " << zoff << endl;
