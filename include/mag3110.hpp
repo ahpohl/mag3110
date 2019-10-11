@@ -93,16 +93,13 @@ public:
   ~MAG3110(void);
   void setDebug(void);
   void initialize(const char* t_bus);
-  void start(void);
   void reset(void);
-  void enterStandby(void);
-  void exitStandby(void);
+  void standby(void);
+  void start(void);
   void setRawMode(bool const t_raw);
   void triggerMeasurement(void);
   void setDR_OS(uint8_t const t_DROS);
-  void enterCalMode(void);
   void calibrate(void);
-  void exitCalMode(void);
   void writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const;
   void setOffset(int const& t_xoff, int const& t_yoff, 
     int const& t_zoff) const;
@@ -120,7 +117,7 @@ public:
   int readOffset(uint8_t const& t_axis) const;
   double getMagnitude(double const& t_x, double const& t_y, 
     double const& t_z) const;
-  double readHeading(void);
+  double getHeading(void);
 
 private:
   bool m_debug;
@@ -128,10 +125,6 @@ private:
   bool m_rawMode;
   bool m_calibrated;
   int m_fd;
-  int m_xmin;
-  int m_xmax;
-  int m_ymin;
-  int m_ymax;
   int m_timeLastChange;
   double m_xscale;
   double m_yscale;
