@@ -277,7 +277,9 @@ void MAG3110::setRawMode(bool const t_raw)
 void MAG3110::calibrate(void)
 {
   m_calibrated = false;
-  int xmin = 0x7FFF, xmax = -0x8000, ymin = 0x7FFF, ymax = -0x8000;
+  int xmin = 0x7FFF, xmax = -0x8000;
+  int ymin = 0x7FFF, ymax = -0x8000;
+  int zmin = 0x7FFF, zmax = -0x8000;
   setRawMode(true);  
   setDR_OS(MAG3110_DR_OS_80_16);
   if (!m_activeMode) { start(); }
@@ -290,9 +292,12 @@ void MAG3110::calibrate(void)
     if (x > xmax) { xmax = x; }
     if (y < ymin) { ymin = y; }
     if (y > ymax) { ymax = y; }
+    if (z < zmin) { zmin = z; }
+    if (z > zmax) { zmax = z; }
     if (m_debug) {
       cout << "x: " << xmin << " < " << x << " < " << xmax 
-        << ", y: " << ymin << " < " << y << " < " << ymax << endl;
+        << ", y: " << ymin << " < " << y << " < " << ymax
+        << ", z: " << zmin << " < " << z << " < " << zmax << endl;
     }
     end = chrono::system_clock::now();
   } while ((chrono::duration_cast<chrono::milliseconds>
@@ -300,6 +305,7 @@ void MAG3110::calibrate(void)
 
   writeOffset(MAG3110_X_AXIS, (xmin + xmax) / 2);
 	writeOffset(MAG3110_Y_AXIS, (ymin + ymax) / 2);
+  writeOffset(MAG3110_Z_AXIS, (zmin + zmax) / 2);
 	m_xscale = 1.0 / (xmax - xmin);
 	m_yscale = 1.0 / (ymax - ymin);
 	setRawMode(false);
@@ -309,7 +315,7 @@ double MAG3110::getHeading(void)
 {
 	int x, y, z;
 	readMag(&x, &y, &z);
-	return (atan2(-y*m_yscale, x*m_xscale) * DEG_PER_RAD);
+	return (atan2(y*m_yscale, x*m_xscale) * DEG_PER_RAD);
 }
 
 void MAG3110::triggerMeasurement(void)
