@@ -189,7 +189,7 @@ void MAG3110::setDR_OS(uint8_t const t_DROS)
   }
 }
 
-void MAG3110::rawData(bool const t_raw)
+void MAG3110::setRawMode(bool const t_raw)
 {
   if (t_raw) {
     m_rawMode = true;
@@ -200,84 +200,52 @@ void MAG3110::rawData(bool const t_raw)
   }
 }
 
-void MAG3110::enterCalMode(void)
+void MAG3110::calibrate(void)
 {
-  m_calibrationMode = true;
+  m_calibrated = false: 
   m_xmin = 32767;
   m_xmax = 0x8000;
   m_ymin = 32767;
   m_ymax = 0x8000;
-  rawData(true);  
-  m_calibrated = false;
+  setRawMode(true);  
   setDR_OS(MAG3110_DR_OS_80_16);
-  if (!m_activeMode) {
-    start();
-  }
-}
-/*
-void MAG3110::calibrate(void)
-{
+  if (!m_activeMode) { start(); }
 	int x, y, z;
-	readMag(&x, &y, &z);
-	bool changed = false;
-	if (x < m_xmin) {
-    m_xmin = x;
-    m_changed = true;
-  }
-  if (x > m_xmax) {
-    m_xmax = x;
-    m_changed = true;
-  }
-  if (y < m_ymin) {
-    m_ymin = y;
-    m_changed = true;
-  }
-  if (y > m_ymax) {
-    m_ymax = y;
-    changed = true;
-  }
-	if (m_changed) {
-    auto start = chrono::system_clock::now();
-  }
-  chrono::duration_cast<chrono::milliseconds>(end - start).count()
-  if (millis() > 5000 && millis() - m_timeLastChange > CALIBRATION_TIMEOUT) {
-	  exitCalMode();
-  }
-}
-*/
+  auto start = chrono::system_clock::now();
+  bool hasChanged = false;
+  do {
+    readMag(&x, &y, &z);
+	  if (x < m_xmin) { m_xmin = x; hasChanged = true; }
+    if (x > m_xmax) { m_xmax = x; hasChanged = true; }
+    if (y < m_ymin) { m_ymin = y; hasChanged = true; }
+    if (y > m_ymax) { m_ymax = y; hasChanged = true; }
+    auto end = chrono::system_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>
+      (end - start).count();
+    if (!hasChanged) {
+      m_calibrated = true;
+      break;
+    }
+  } while ((duration < CALIBRATION_TIMEOUT));
 
-void MAG3110::exitCalMode(void)
-{
-	m_xoffset = (m_xmin + m_xmax) / 2;
-	m_yoffset = (m_ymin + m_ymax) / 2;
-	x_scale = 1.0 / (m_xmax - m_xmin);
-	y_scale = 1.0 / (m_ymax - m_ymin);
-	writeOffset(MAG3110_X_AXIS, m_xoffset);
-	writeOffset(MAG3110_Y_AXIS, m_yoffset);
-	rawData(false);
-	m_calibrationMode = false;
-	m_calibrated = true;
-	enterStandby();
+  writeOffset(MAG3110_X_AXIS, (m_xmin + m_xmax) / 2);
+	writeOffset(MAG3110_Y_AXIS, (m_ymin + m_ymax) / 2);
+	m_xscale = 1.0 / (m_xmax - m_xmin);
+	m_yscale = 1.0 / (m_ymax - m_ymin);
+	setRawMode(false);
 }
 
 double MAG3110::readHeading(void)
 {
-  /*
 	int x, y, z;
 	readMag(&x, &y, &z);
-	float xf = (float) x * 1.0f;
-	float yf = (float) y * 1.0f;
-	return (atan2(-y*y_scale, x*x_scale) * DEG_PER_RAD);
-  */
-  return 0;
+	return (atan2(-y*m_yscale, x*m_xscale) * DEG_PER_RAD);
 }
 
 void MAG3110::triggerMeasurement(void)
 {	
-  /*
-	uint8_t current = readRegister(MAG3110_CTRL_REG1);
-	writeRegister(MAG3110_CTRL_REG1, (current |  0x02));
-  */
+	uint8_t reg = readRegister(MAG3110_CTRL_REG1);
+	writeRegister(MAG3110_CTRL_REG1, (reg |  0x02));
 }
 
 bool MAG3110::isActive(void)
@@ -293,11 +261,6 @@ bool MAG3110::isRaw(void)
 bool MAG3110::isCalibrated(void)
 {
 	return m_calibrated;
-}
-
-bool MAG3110::isCalibrating(void)
-{
-	return m_calibrationMode;
 }
 
 uint8_t MAG3110::getSysMode(void)
