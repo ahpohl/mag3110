@@ -108,14 +108,18 @@ public:
   void readMag(int* t_x, int* t_y, int* t_z) const;
   void readMag2(int* t_x, int* t_y, int* t_z) const; 
   void readMicroTesla(double* t_x, double* t_y, double* t_z) const;
-  bool isActive(void);
-  bool isRaw(void);
-  bool isCalibrated(void);
+  void displayMag(int const& t_x, int const& t_y, int const& t_z) const;
+  void displayMag(int const& t_x, int const& t_y, int const& t_z, 
+    double const& t_mag) const;
+  bool isActive(void) const;
+  bool isRaw(void) const;
+  bool isCalibrated(void) const;
   bool dataReady(void) const;  
-  uint8_t getSysMode(void);
+  uint8_t getSysMode(void) const;
   uint8_t readRegister(uint8_t const& t_addr) const;
   int readAxis(uint8_t const& t_axis) const;
   int readOffset(uint8_t const& t_axis) const;
+  int getTemperature(void) const;
   double getMagnitude(double const& t_x, double const& t_y, 
     double const& t_z) const;
   double getHeading(void);

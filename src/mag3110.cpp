@@ -1,7 +1,9 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <thread>
 #include <chrono>
 
 #include <linux/i2c-dev.h>
@@ -16,7 +18,7 @@ using namespace std;
 
 uint8_t const MAG3110::MAG3110_I2C_ADDRESS = 0x0E;
 uint8_t const MAG3110::MAG3110_WHO_AM_I_RSP = 0xC4;
-int const MAG3110::CALIBRATION_TIMEOUT = 100; // ms
+int const MAG3110::CALIBRATION_TIMEOUT = 1000; // ms
 double const MAG3110::DEG_PER_RAD = (180.0 / M_PI);
   
 // register addresses
@@ -41,8 +43,7 @@ uint8_t const MAG3110::MAG3110_CTRL_REG2 = 0x11;
   
 // CTRL_REG1 Settings
 // Output Data Rate/Oversample Settings
-// DR_OS_80_16 -> Output Data Rate = 80Hz, 
-// Oversampling Ratio = 16
+// DR_OS_80_16 -> Output Data Rate = 80Hz, Oversampling Ratio = 16
 uint8_t const MAG3110::MAG3110_DR_OS_80_16 =    0x00;
 uint8_t const MAG3110::MAG3110_DR_OS_40_32 =		0x08;
 uint8_t const MAG3110::MAG3110_DR_OS_20_64 =		0x10;
@@ -92,9 +93,11 @@ uint8_t const MAG3110::MAG3110_MAG_RST =		  0x10;
 uint8_t const MAG3110::MAG3110_SYSMOD_STANDBY =    0x00;
 uint8_t const MAG3110::MAG3110_SYSMOD_ACTIVE_RAW = 0x01;
 uint8_t const MAG3110::MAG3110_SYSMOD_ACTIVE	=	   0x02;
-uint8_t const MAG3110::MAG3110_X_AXIS =            0x01;
-uint8_t const MAG3110::MAG3110_Y_AXIS =            0x03;
-uint8_t const MAG3110::MAG3110_Z_AXIS =            0x05;
+
+// AXES definitions
+uint8_t const MAG3110::MAG3110_X_AXIS = 0x01;
+uint8_t const MAG3110::MAG3110_Y_AXIS = 0x03;
+uint8_t const MAG3110::MAG3110_Z_AXIS = 0x05;
 
 MAG3110::MAG3110(void)
 {
@@ -173,6 +176,7 @@ void MAG3110::start(void)
   m_activeMode = true;
   uint8_t reg = readRegister(MAG3110_CTRL_REG1);
   writeRegister(MAG3110_CTRL_REG1, (reg | MAG3110_ACTIVE_MODE));
+  setDR_OS(MAG3110_DR_OS_10_128);
 }
 
 int MAG3110::readAxis(uint8_t const& t_axis) const
@@ -191,6 +195,7 @@ void MAG3110::writeOffset(uint8_t const& t_axis, int const& t_offset) const
   uint8_t lsbAddr = msbAddr + 0x01;
   writeRegister(msbAddr, static_cast<uint8_t>((t_offset >> 7) & 0xFF));
   writeRegister(lsbAddr, static_cast<uint8_t>((t_offset << 1) & 0xFF));
+  this_thread::sleep_for(chrono::milliseconds(10));
 }
 
 int MAG3110::readOffset(uint8_t const& t_axis) const
@@ -226,14 +231,14 @@ void MAG3110::reset(void)
   m_calibrated = false;
 }
 
-void MAG3110::readMag(int* t_x, int* t_y, int* t_z) const
+void MAG3110::readMag2(int* t_x, int* t_y, int* t_z) const
 {
   *t_x = readAxis(MAG3110_X_AXIS);
   *t_y = readAxis(MAG3110_Y_AXIS);
   *t_z = readAxis(MAG3110_Z_AXIS);
 }
 
-void MAG3110::readMag2(int* t_x, int* t_y, int* t_z) const
+void MAG3110::readMag(int* t_x, int* t_y, int* t_z) const
 {
   const int LEN = 1;
   if (write(m_fd, &MAG3110_OUT_X_MSB, LEN) != LEN) {
@@ -298,38 +303,45 @@ void MAG3110::setRawMode(bool const t_raw)
 
 void MAG3110::calibrate(void)
 {
-  int xmin = 0x7FFF, xmax = -0x8000;
-  int ymin = 0x7FFF, ymax = -0x8000;
-  int zmin = 0x7FFF, zmax = -0x8000;
-  setRawMode(true);  
+  if (!m_activeMode) { 
+    start();
+  }
+  setRawMode(true);
   setDR_OS(MAG3110_DR_OS_80_16);
-  if (!m_activeMode) { start(); }
+  int xmin = INT16_MAX, xmax = INT16_MIN;
+  int ymin = INT16_MAX, ymax = INT16_MIN;
+  int zmin = INT16_MAX, zmax = INT16_MIN;
 	int x, y, z;
+  bool changed;
   auto start = chrono::system_clock::now();
   chrono::high_resolution_clock::time_point end;
   do {
+    changed = false;
     readMag(&x, &y, &z);
-	  if (x < xmin) { xmin = x; }
-    if (x > xmax) { xmax = x; }
-    if (y < ymin) { ymin = y; }
-    if (y > ymax) { ymax = y; }
-    if (z < zmin) { zmin = z; }
-    if (z > zmax) { zmax = z; }
+	  if (x < xmin) { xmin = x; changed = true; }
+    if (x > xmax) { xmax = x; changed = true; }
+    if (y < ymin) { ymin = y; changed = true; }
+    if (y > ymax) { ymax = y; changed = true; }
+    if (z < zmin) { zmin = z; changed = true; }
+    if (z > zmax) { zmax = z; changed = true; }
     if (m_debug) {
       cout << "x: " << xmin << " < " << x << " < " << xmax 
         << ", y: " << ymin << " < " << y << " < " << ymax
         << ", z: " << zmin << " < " << z << " < " << zmax << endl;
     }
+    if (changed) {
+      start = chrono::system_clock::now();
+    }
     end = chrono::system_clock::now();
-  } while ((chrono::duration_cast<chrono::milliseconds>
-    (end - start).count() < CALIBRATION_TIMEOUT));
-
+  } while (chrono::duration_cast<chrono::milliseconds>(end - start).count() 
+    < CALIBRATION_TIMEOUT);
   writeOffset(MAG3110_X_AXIS, (xmin + xmax) / 2);
 	writeOffset(MAG3110_Y_AXIS, (ymin + ymax) / 2);
   writeOffset(MAG3110_Z_AXIS, (zmin + zmax) / 2);
 	m_xscale = 1.0 / (xmax - xmin);
 	m_yscale = 1.0 / (ymax - ymin);
 	setRawMode(false);
+  setDR_OS(MAG3110_DR_OS_10_128);
   m_calibrated = true;
 }
 
@@ -346,23 +358,44 @@ void MAG3110::triggerMeasurement(void)
 	writeRegister(MAG3110_CTRL_REG1, (reg |  0x02));
 }
 
-bool MAG3110::isActive(void)
+bool MAG3110::isActive(void) const
 {
 	return m_activeMode;
 }
 
-bool MAG3110::isRaw(void)
+bool MAG3110::isRaw(void) const
 {
 	return m_rawMode;
 }
 
-bool MAG3110::isCalibrated(void)
+bool MAG3110::isCalibrated(void) const
 {
 	return m_calibrated;
 }
 
-uint8_t MAG3110::getSysMode(void)
+uint8_t MAG3110::getSysMode(void) const
 {
 	return readRegister(MAG3110_SYSMOD);
 }
 
+int MAG3110::getTemperature(void) const
+{
+  uint8_t temp = readRegister(MAG3110_DIE_TEMP);
+  return static_cast<int>(temp);
+}
+
+void MAG3110::displayMag(int const& t_x, int const& t_y, int const& t_z) const
+{
+  cout << "x: " << setw(6) << t_x
+    << ", y: " << setw(6) << t_y
+    << ", z: " << setw(6) << t_z << endl;
+}
+
+void MAG3110::displayMag(int const& t_x, int const& t_y, int const& t_z, 
+  double const& t_mag) const
+{
+  cout << "x: " << setw(6) << t_x
+    << ", y: " << setw(6) << t_y
+    << ", z: " << setw(6) << t_z
+    << ", <B>: " << setw(6) << fixed << setprecision(0) << t_mag << endl;
+}
