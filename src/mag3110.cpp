@@ -233,6 +233,25 @@ void MAG3110::readMag(int* t_x, int* t_y, int* t_z) const
   *t_z = readAxis(MAG3110_Z_AXIS);
 }
 
+void MAG3110::readMag2(int* t_x, int* t_y, int* t_z) const
+{
+  const int LEN = 1;
+  if (write(m_fd, &MAG3110_OUT_X_MSB, LEN) != LEN) {
+    throw runtime_error("Failed to write to the i2c bus");
+  }
+  const int BYTES = 6;
+  uint16_t val[BYTES] = {0};
+  for (uint8_t i = 0; i < BYTES; ++i)
+  { 
+    if (read(m_fd, &val[i], LEN) != LEN) {
+      throw runtime_error("Failed to read from the i2c bus");
+    }
+  }
+  *t_x = static_cast<int16_t>(((val[0] & 0xFF) << 8) | (val[1] & 0xFF));
+  *t_y = static_cast<int16_t>(((val[2] & 0xFF) << 8) | (val[3] & 0xFF));
+  *t_z = static_cast<int16_t>(((val[4] & 0xFF) << 8) | (val[5] & 0xFF));
+}
+
 void MAG3110::readMicroTesla(double* t_x, double* t_y, double* t_z) const
 {
 	int x, y, z;

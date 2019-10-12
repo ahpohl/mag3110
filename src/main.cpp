@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 
   while (true) {
     int x, y, z;
-    mySensor.readMag(&x, &y, &z);
+    mySensor.readMag2(&x, &y, &z);
     double mag = mySensor.getMagnitude(x, y, z);
     cout << "x: " << setw(6) << x 
       << ", y: " << setw(6) << y 
