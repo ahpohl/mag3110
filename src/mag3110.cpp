@@ -123,10 +123,11 @@ void MAG3110::initialize(const char* t_bus)
       + strerror(errno) + " (" + to_string(errno) + ")");
   }
   if ((res = ioctl(m_fd, I2C_SLAVE, MAG3110_I2C_ADDRESS)) < 0) {
-    throw runtime_error("Failed to acquire bus access and/or talk to slave");
+    throw runtime_error(string("Failed to acquire bus access and/or talk to slave (") + to_string(rsp) + ")");
   }
 	if ((rsp = readRegister(MAG3110_WHO_AM_I)) != MAG3110_WHO_AM_I_RSP) {
-		throw runtime_error("Failed to find MAG3110 connected");
+		throw runtime_error(string("Failed to find MAG3110 connected (") 
+      + to_string(rsp) + ")");
 	}
   reset();
   if (m_debug) {
@@ -136,25 +137,27 @@ void MAG3110::initialize(const char* t_bus)
 
 uint8_t MAG3110::readRegister(uint8_t const& t_addr) const
 {
-  uint8_t res;
+  uint8_t rsp;
+  int res;
   const int LEN = 1;
-  if (write(m_fd, &t_addr, LEN) != LEN) {
-    throw runtime_error("Failed to write to the i2c bus");
+  if ((res = write(m_fd, &t_addr, LEN)) != LEN) {
+    throw runtime_error(string("readRegister: Failed to write to the i2c bus (") + to_string(res) + ")");
   }
-  if (read(m_fd, &res, LEN) != LEN) {
-    throw runtime_error("Failed to read from the i2c bus");
+  if ((res = read(m_fd, &rsp, LEN)) != LEN) {
+    throw runtime_error(string("readRegister: Failed to read from the i2c bus (") + to_string(res) + ")");
   }
-  return res;
+  return rsp;
 }
 
 void MAG3110::writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const
 {
+  int res;
   const int LEN = 2;
   uint8_t data[LEN] = {0};
   data[0] = t_addr;
   data[1] = t_val;
-  if (write(m_fd, data, LEN) != LEN) {
-    throw runtime_error("Failed to write to the i2c bus");
+  if ((res = write(m_fd, data, LEN)) != LEN) {
+    throw runtime_error(string("writeRegister: Failed to write to the i2c bus (") + to_string(res) + ")");
   }
 }
 

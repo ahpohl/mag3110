@@ -13,7 +13,8 @@ int main(int argc, char** argv)
   mySensor.setDebug();
   mySensor.initialize("/dev/i2c-1");
   mySensor.reset();
-  mySensor.calibrate();
+  mySensor.start();
+  //mySensor.calibrate();
   
   int xoff, yoff, zoff;
   mySensor.getOffset(&xoff, &yoff, &zoff);
