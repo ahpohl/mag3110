@@ -27,6 +27,7 @@ int main(int argc, char** argv)
   mySensor.getOffset(&xoff, &yoff, &zoff);
   cout << "Get offset: " << xoff << ", " << yoff << ", " << zoff << endl;
   mySensor.setRawMode(false);
+  this_thread::sleep_for(chrono::milliseconds(10));
   mySensor.readMag(&x, &y, &z);
   mySensor.displayMag(x, y, z);
   

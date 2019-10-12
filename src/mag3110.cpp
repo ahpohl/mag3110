@@ -146,6 +146,7 @@ uint8_t MAG3110::readRegister(uint8_t const& t_addr) const
   if ((res = write(m_fd, &t_addr, LEN)) != LEN) {
     throw runtime_error(string("readRegister: Failed to write to the i2c bus (") + to_string(res) + ")");
   }
+  this_thread::sleep_for(chrono::microseconds(2));
   if ((res = read(m_fd, &rsp, LEN)) != LEN) {
     throw runtime_error(string("readRegister: Failed to read from the i2c bus (") + to_string(res) + ")");
   }
@@ -183,6 +184,7 @@ int MAG3110::readAxis(uint8_t const& t_axis) const
   uint8_t msbAddr = t_axis;
   uint8_t lsbAddr = t_axis + 0x01;
   uint8_t msb = readRegister(msbAddr);
+  this_thread::sleep_for(chrono::microseconds(2));
   uint8_t lsb = readRegister(lsbAddr);
   return static_cast<int16_t>((lsb & 0xFF) | ((msb & 0xFF) << 8));
 }
@@ -193,6 +195,7 @@ void MAG3110::writeOffset(uint8_t const& t_axis, int const& t_offset) const
   uint8_t msbAddr = t_axis + 0x08;
   uint8_t lsbAddr = msbAddr + 0x01;
   writeRegister(msbAddr, static_cast<uint8_t>((t_offset >> 7) & 0xFF));
+  this_thread::sleep_for(chrono::milliseconds(15));
   writeRegister(lsbAddr, static_cast<uint8_t>((t_offset << 1) & 0xFF));
 }
 
@@ -238,16 +241,20 @@ void MAG3110::readMag2(int* t_x, int* t_y, int* t_z) const
 
 void MAG3110::readMag(int* t_x, int* t_y, int* t_z) const
 {
+  int res;
   const int LEN = 1;
-  if (write(m_fd, &MAG3110_OUT_X_MSB, LEN) != LEN) {
-    throw runtime_error("Failed to write to the i2c bus");
+  if ((res = write(m_fd, &MAG3110_OUT_X_MSB, LEN)) != LEN) {
+    throw runtime_error(string("readMag: Failed to write to the i2c bus (") 
+      + to_string(res) + ")");
   }
+  this_thread::sleep_for(chrono::microseconds(2));
   const int BYTES = 6;
   uint16_t val[BYTES] = {0};
   for (uint8_t i = 0; i < BYTES; ++i)
   { 
-    if (read(m_fd, &val[i], LEN) != LEN) {
-      throw runtime_error("Failed to read from the i2c bus");
+    if ((res = read(m_fd, &val[i], LEN)) != LEN) {
+      throw runtime_error(string("readMag: Failed to read from the i2c bus (")
+        + to_string(res) + ")");
     }
   }
   *t_x = static_cast<int16_t>(((val[0] & 0xFF) << 8) | (val[1] & 0xFF));
@@ -281,8 +288,10 @@ void MAG3110::setDR_OS(uint8_t const t_DROS)
   if (m_activeMode) {
     standby();
   }
+  this_thread::sleep_for(chrono::milliseconds(100));
   uint8_t reg = readRegister(MAG3110_CTRL_REG1) & 0x07;
   writeRegister(MAG3110_CTRL_REG1, (reg | t_DROS));
+  this_thread::sleep_for(chrono::milliseconds(100));
   if (wasActive) {
     start();
   }
@@ -344,7 +353,7 @@ double MAG3110::getHeading(void)
 {
 	int x, y, z;
 	readMag(&x, &y, &z);
-	return (atan2(y*m_yscale, x*m_xscale) * DEG_PER_RAD);
+	return (atan2(-y*m_yscale, x*m_xscale) * DEG_PER_RAD);
 }
 
 void MAG3110::triggerMeasurement(void)
