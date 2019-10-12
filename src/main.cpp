@@ -27,14 +27,15 @@ int main(int argc, char** argv)
   mySensor.getOffset(&xoff, &yoff, &zoff);
   cout << "Get offset: " << xoff << ", " << yoff << ", " << zoff << endl;
   mySensor.setRawMode(false);
-  this_thread::sleep_for(chrono::milliseconds(10));
+  this_thread::sleep_for(chrono::milliseconds(100));
   mySensor.readMag(&x, &y, &z);
   mySensor.displayMag(x, y, z);
   
 
   if (mySensor.isCalibrated()) {
     double heading = mySensor.getHeading();
-    cout << "Heading: " << heading << " deg" << endl;
+    cout << "Heading: " << fixed << setprecision(1) << heading 
+      << "°" << endl;
   }
   
   int temp = mySensor.getTemperature();
