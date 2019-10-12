@@ -306,6 +306,7 @@ void MAG3110::setRawMode(bool const t_raw)
     m_rawMode = false;
     writeRegister(MAG3110_CTRL_REG2, MAG3110_AUTO_MRST_EN & ~(0x01 << 5));
   }
+  this_thread::sleep_for(chrono::milliseconds(100));
 }
 
 void MAG3110::calibrate(void)
@@ -314,11 +315,11 @@ void MAG3110::calibrate(void)
   if (!m_activeMode) { 
     start();
   }
+  int x, y, z;
   setRawMode(true);
   int xmin = INT16_MAX, xmax = INT16_MIN;
   int ymin = INT16_MAX, ymax = INT16_MIN;
   int zmin = INT16_MAX, zmax = INT16_MIN;
-	int x, y, z;
   bool changed;
   auto start = chrono::system_clock::now();
   chrono::high_resolution_clock::time_point end;
