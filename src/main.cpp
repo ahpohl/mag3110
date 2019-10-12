@@ -39,7 +39,6 @@ int main(int argc, char** argv)
   int temp = mySensor.getTemperature();
   cout << "Temperature: " << temp << "°C" << endl;
   
-  /*
   ofstream file;
   file.open("mag.txt", ios::app);
   time_t timestamp;
@@ -56,7 +55,6 @@ int main(int argc, char** argv)
   }
 
   file.close();
-  */
 
   return 0;
 }
