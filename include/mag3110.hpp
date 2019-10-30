@@ -14,40 +14,65 @@
 class MAG3110
 {
 public:
+  /// I2C address of the chip
   static uint8_t const MAG3110_I2C_ADDRESS;
+  /// Device identifier
   static uint8_t const MAG3110_WHO_AM_I_RSP;
+  /// Calibration timeout constant [ms]
   static int const CALIBRATION_TIMEOUT;
+  /// Temperature offset
   static int const MAG3110_DIE_TEMP_OFFSET;
  
-  /** @name Register addresses
+  /** @defgroup REGISTERS 
+      @name Register addresses
       
       These attributes describe the register addresses
       */
   ///@{
+
+  /// Data ready status per axis
   static uint8_t const MAG3110_DR_STATUS;
+  /// Bits [15:8] of X measurement
   static uint8_t const MAG3110_OUT_X_MSB;
+  /// Bits [7:0] of X measurement
   static uint8_t const MAG3110_OUT_X_LSB;
+  /// Bits [15:8] of Y measurement
   static uint8_t const MAG3110_OUT_Y_MSB;
+  /// Bits [7:0] of Y measurement
   static uint8_t const MAG3110_OUT_Y_LSB;
+  /// Bits [15:8] of Z measurement
   static uint8_t const MAG3110_OUT_Z_MSB;
+  /// Bits [7:0] of Z measurement
   static uint8_t const MAG3110_OUT_Z_LSB;
+  /// Device identification
   static uint8_t const MAG3110_WHO_AM_I;
+  /// Current System Mode
   static uint8_t const MAG3110_SYSMOD;
+  /// Bits [14:7] of user X offset
   static uint8_t const MAG3110_OFF_X_MSB;
+  /// Bits [6:0] of user X offset
   static uint8_t const MAG3110_OFF_X_LSB;
+  /// Bits [14:7] of user Y offset
   static uint8_t const MAG3110_OFF_Y_MSB;
+  /// Bits [6:0] of user Y offset
   static uint8_t const MAG3110_OFF_Y_LSB;
+  /// Bits [14:7] of user Z offset 
   static uint8_t const MAG3110_OFF_Z_MSB;
+  /// Bits [6:0] of user Z offset
   static uint8_t const MAG3110_OFF_Z_LSB;
+  /// Temperature, signed 8 bits in °C
   static uint8_t const MAG3110_DIE_TEMP;
+  /// Operation modes
   static uint8_t const MAG3110_CTRL_REG1;
+  /// Operation modes
   static uint8_t const MAG3110_CTRL_REG2;
   ///@}
   
-  /** @name CTRL_REG1 settings: data rate and oversampling ratio
-      
+  /** @defgroup CTRL_REG1_DROS
+      @name Control register 1: data rate and oversampling settings
+            
       These attributes select the data rate and oversampling ratio.
-      For example DR_OS_80_16 -> Output Data Rate = 80Hz, 
+      For example: DR_OS_80_16 -> Output Data Rate = 80 Hz, 
       oversampling ratio = 16.
       */
   ///@{
@@ -85,7 +110,8 @@ public:
   static uint8_t const MAG3110_DR_OS_0_08_128;
   ///@}
 
-  /** @name Other CTRL_REG1 settings
+  /** @defgroup CTRL_REG1_OTHER
+      @name Control register 1: other settings
       
       These attributes select a fast read mode, trigger a measurement and
       put the chip into active mode
@@ -96,7 +122,8 @@ public:
   static uint8_t const MAG3110_ACTIVE_MODE;
   ///@}
 
-  /** @name CTRL_REG2 settings
+  /** @defgroup CTRL_REG2
+      @name Control register 2 settings
       
       These attributes enable an auto magnetic reset, put the chip into 
       raw mode ignoring the offset correction, and perform a magnetic reset
@@ -107,9 +134,11 @@ public:
   static uint8_t const MAG3110_MAG_RST;
   ///@}
 
-  /** @name SYSMOD readings
+  /** @defgroup SYSMOD
+      @name SYSMOD readings
       
-      These attributes indicate the current device operation mode
+      These attributes indicate the current device operation mode,
+      standby, active or active raw mode
       */
   ///@{
   static uint8_t const MAG3110_SYSMOD_STANDBY;
@@ -117,7 +146,8 @@ public:
   static uint8_t const MAG3110_SYSMOD_ACTIVE;
   ///@}
 
-  /** @name DR_STATUS readings
+  /** @defgroup DR_STATUS
+      @name DR_STATUS readings
 
       These attributes provide the aquisition status information of the OUT_X, 
       OUT_Y, and OUT_Z registers
@@ -133,9 +163,10 @@ public:
   static uint8_t const MAG3110_DR_STATUS_XYZOW;
   ///@}
 
-  /** @name axes base addresses
+  /** @defgroup AXES
+      @name Magnetomoeter axes
 
-      These attributes describe the base addresses of the magnetometer axes
+      These attributes describe the base address of the magnetometer axes
       */
   ///@{
   static uint8_t const MAG3110_X_AXIS;
@@ -222,11 +253,35 @@ public:
       the chip does not automatically apply the user offset correction and 
       outputs the raw magnetometer reading. Useful for calibration.
   
-      @returns true: chip is in active raw mode
+      @param t_raw true: enable active raw mode, false: disable active raw mode
       */
   void setRawMode(bool const t_raw) const;
+    /** @brief Trigger measurement
+      
+      This function triggers a measurement. In standby mode, the measurement will
+      occur immediately and the chip returns to standby. In active mode, any
+      measurement in progress will continue with the highest possible data rate
+      for the currently selected oversampling rate.
+      */
   void triggerMeasurement(void) const;
-  bool dataReady(void) const;  
+    /** @brief Test if new data are ready
+
+      This function reads the ZYXDR bit of the DR_STATUS register and reports if
+      new magnetic data are available.
+
+      @returns true: new set of data ready, false: no new data ready
+      */
+  bool dataReady(void) const;
+    /** @brief Set data rate and oversampling ratio
+
+      This function sets the data rate (DR) and the oversampling ratio (OS) of 
+      the chip. The combination of the two settings determines the ADC data rate 
+      (80-1280 Hz), the typical current (8.6-900.0 µA) and the average noise level
+      (0.25-0.40 µT rms). For details see the technical reference data sheet.
+
+      @param t_DROS data rate and oversampling ratio setting
+      @see @ref CTRL_REG1_DROS
+      */
   void setDR_OS(uint8_t const t_DROS);
   uint8_t getDR_OS(void) const;
   void setDelay(uint8_t t_DROS);
