@@ -305,7 +305,7 @@ public:
       the chip. The combination of the two settings determines the ADC data rate 
       (80-1280 Hz), the typical current (8.6-900.0 µA) and the average noise level
       (0.25-0.40 µT rms). For details see the
-      <a href="MAG3110_v9.2.pdf" target="_blank">technical reference</a> on page 20.
+      <a href="MAG3110_reference.pdf" target="_blank">technical reference</a> on page 20.
 
       @param t_DROS data rate and oversampling ratio setting
       @see getDR_OS()

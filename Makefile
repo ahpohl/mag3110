@@ -76,7 +76,7 @@ CPPFLAGS += -DVERSION_BUILD_DATE=\""$(shell date "+%F %T")"\" \
 # deleting dependencies appended to the file from 'make depend'
 #
 
-.PHONY: depend clean install
+.PHONY: depend clean install doc
 
 all: shared static
 
@@ -109,4 +109,6 @@ install: all
 	install -m 644 $(STATIC_LIB) $(PREFIX)/lib/
 	install -m 644 $(SHARED_LIB) $(PREFIX)/lib/
 
+doc:
+	doxygen Doxyfile
 # DO NOT DELETE THIS LINE -- make depend needs it
