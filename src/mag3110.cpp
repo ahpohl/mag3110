@@ -358,7 +358,7 @@ void MAG3110::calibrate(void)
   setRawMode(false);
 }
 
-void MAG3110::readMag(int* t_bx, int* t_by, int* t_bz) const
+void MAG3110::getMag(int* t_bx, int* t_by, int* t_bz) const
 {
   int res;
   const int LEN = 1;
@@ -381,10 +381,10 @@ void MAG3110::readMag(int* t_bx, int* t_by, int* t_bz) const
   *t_bz = static_cast<int16_t>(((val[4] & 0xFF) << 8) | (val[5] & 0xFF));
 }
 
-void MAG3110::getMag(int* t_bx, int* t_by, int* t_bz) const
+void MAG3110::getMagDelayed(int* t_bx, int* t_by, int* t_bz) const
 {
   this_thread::sleep_for(chrono::milliseconds(m_delay));
-  readMag(t_bx, t_by, t_bz);
+  getMag(t_bx, t_by, t_bz);
 }
 
 int MAG3110::getMagPoll(int* t_bx, int* t_by, int* t_bz) const
@@ -395,7 +395,7 @@ int MAG3110::getMagPoll(int* t_bx, int* t_by, int* t_bz) const
     this_thread::sleep_for(chrono::microseconds(m_delay * 100));
     ++count; 
   } while (!dataReady());
-  readMag(t_bx, t_by, t_bz);
+  getMag(t_bx, t_by, t_bz);
   if (m_debug) {
     cout << "getMagPoll: " << (count * m_delay * 0.1) << " ms" << endl;
   }

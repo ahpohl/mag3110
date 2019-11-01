@@ -386,59 +386,87 @@ public:
       @see getOffset()
       */
   void calibrate(void);
-  /** @brief Read magnetic induction
+  /** @brief Get magnetic field strength
       
-      This function reads the magnetic induction along each axis.
+      This function gets the magnetic field strength along each axis.
 
       @param t_bx X-axis component
       @param t_by Y-axis component
       @param t_bz Z-axis component
-      @see getMag()
+      @see getMagDelayed()
       @see getMagPoll()
-      @see getMagnitude()
-      */
-  void readMag(int* t_bx, int* t_by, int* t_bz) const;
-  /** @brief Get magnetic induction
-      
-      This function reads the magnetic induction along each axis.
-
-      @param t_bx X-axis component
-      @param t_by Y-axis component
-      @param t_bz Z-axis component
-      @see readMag()
-      @see getMagPoll()
-      @see getMagnitude()
       */
   void getMag(int* t_bx, int* t_by, int* t_bz) const;
-  /** @brief Poll magnetic induction
+  /** @brief Get magnetic field strength (delayed)
       
-      This function reads the magnetic induction along each axis.
+      This function gets the magnetic field strength along each axis. The 
+      output is delayed.
 
       @param t_bx X-axis component
       @param t_by Y-axis component
       @param t_bz Z-axis component
-      @see readMag()
       @see getMag()
-      @see getMagnitude()
+      @see getMagPoll()
+      @see setDelay(int)
+      */
+  void getMagDelayed(int* t_bx, int* t_by, int* t_bz) const;
+  /** @brief Poll magnetic field strength
+      
+      This function polls the magnetic field strength along each axis. It
+      waits until new data is ready before a new read request is made. 
+
+      @param t_bx X-axis component
+      @param t_by Y-axis component
+      @param t_bz Z-axis component
+      @see getMag()
+      @see getMagDelayed()
       */
   int getMagPoll(int* t_bx, int* t_by, int* t_bz) const;
-  /** @brief Magnetic induction
+  /** @brief Calculate magnetic field strength
       
-      This function calculates the net magnetic induction.
+      This function calculates the magnitude of the magnetic field.
 
       @param t_bx X-axis component
       @param t_by Y-axis component
       @param t_bz Z-axis component
-      @returns Net magnetic induction
-      @see readMag()
+      @returns Magnitude of the magnetic field
       @see getMag()
+      @see getMagDelayed()
       @see getMagPoll()
       */
   double getMagnitude(int const& t_bx, int const& t_by, 
-    int const& t_bz) const
+    int const& t_bz) const;
+  /** @brief Display magnetic field strength
+
+      This function displays the magnetic field strength along each
+      axis.
+
+      @param t_bx X-axis component
+      @param t_by Y-axis component
+      @param t_bz Z-axis component
+      @see getMag()
+      */
   void displayMag(int const& t_bx, int const& t_by, int const& t_bz) const;
+  /** @brief Display magnetic field strength
+
+      This function displays the magnetic field strength along each
+      axis and the magnitude of the magnetic field.
+
+      @param t_bx X-axis component
+      @param t_by Y-axis component
+      @param t_bz Z-axis component
+      @param t_mag Magnitute of magnetic field
+      @see getMag()
+      */
   void displayMag(int const& t_bx, int const& t_by, int const& t_bz, 
     double const& t_mag) const;
+  /** @brief Get temperature
+    
+      This function reads the die temperature inside the chip. The output
+      range is limited from -40°C to 125°C
+
+      @returns Temperature in °C  
+      */
   int getTemperature(void) const;
   
 private:
