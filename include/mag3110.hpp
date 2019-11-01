@@ -154,7 +154,7 @@ public:
   static uint8_t const MAG3110_AUTO_MRST_EN;
   /// Data output correction
   static uint8_t const MAG3110_RAW_MODE;
-  /// Magnetic sensor reset (one-shot)\
+  /// Magnetic sensor reset (one-shot).
   static uint8_t const MAG3110_MAG_RST;
   ///@}
 
