@@ -211,6 +211,11 @@ public:
       The default destructor removes the I<sup>2</sup>C bus handle
       */
   ~MAG3110(void);
+  /** brief Get library version
+      
+      This function outputs the library version and build date
+      */
+  void getVersion(void) const;
   /** @brief Control debug output
       
       This function enables or disables debug output of the member functions.  

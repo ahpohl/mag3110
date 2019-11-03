@@ -120,6 +120,14 @@ MAG3110::~MAG3110(void)
   }
 }
 
+void MAG3110::getVersion(void) const
+{
+  cout << "MAG3110 library " << VERSION_TAG 
+    << " (" << VERSION_BUILD << ") built "
+    << VERSION_BUILD_DATE 
+    << " by " << VERSION_BUILD_MACHINE << endl;
+}
+
 void MAG3110::setDebug(bool t_debug)
 {
   m_debug = t_debug;

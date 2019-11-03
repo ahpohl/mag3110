@@ -12,6 +12,7 @@ using namespace std;
 int main(int argc, char** argv)
 {
   MAG3110 mag;
+  mag.getVersion();
   mag.setDebug(true);
   cout << "Initialization" << endl;
   mag.initialize("/dev/i2c-1");
