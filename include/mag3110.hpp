@@ -20,8 +20,6 @@ public:
   static uint8_t const MAG3110_I2C_ADDRESS;
   /// Device identifier
   static uint8_t const MAG3110_WHO_AM_I_RSP;
-  /// Calibration timeout constant [ms]
-  static int const CALIBRATION_TIMEOUT;
   /// Temperature offset
   static int const MAG3110_DIE_TEMP_OFFSET;
   ///@} 
@@ -303,7 +301,7 @@ public:
 
       @returns True: new set of data ready, false: no new data ready
       */
-  bool dataReady(void) const;
+  bool isDataReady(void) const;
   /** @brief Set data rate and oversampling ratio
 
       This function sets the data rate (DR) and the oversampling ratio (OS) of 
@@ -426,7 +424,7 @@ public:
       @see getMag()
       @see getMagDelayed()
       */
-  int getMagPoll(int* t_bx, int* t_by, int* t_bz) const;
+  void getMagPoll(int* t_bx, int* t_by, int* t_bz) const;
   /** @brief Calculate magnetic field strength
       
       This function calculates the magnitude of the magnetic field.

@@ -18,10 +18,8 @@ using namespace std;
 
 uint8_t const MAG3110::MAG3110_I2C_ADDRESS = 0x0E;
 uint8_t const MAG3110::MAG3110_WHO_AM_I_RSP = 0xC4;
-int const MAG3110::CALIBRATION_TIMEOUT = 100; // ms
 int const MAG3110::MAG3110_DIE_TEMP_OFFSET = 11; // °C
   
-// register addresses
 uint8_t const MAG3110::MAG3110_DR_STATUS = 0x00;
 uint8_t const MAG3110::MAG3110_OUT_X_MSB = 0x01;
 uint8_t const MAG3110::MAG3110_OUT_X_LSB = 0x02;
@@ -41,9 +39,6 @@ uint8_t const MAG3110::MAG3110_DIE_TEMP =  0x0F;
 uint8_t const MAG3110::MAG3110_CTRL_REG1 = 0x10;
 uint8_t const MAG3110::MAG3110_CTRL_REG2 = 0x11;
   
-// CTRL_REG1 Settings
-// Output Data Rate/Oversample Settings
-// DR_OS_80_16 -> Output Data Rate = 80Hz, Oversampling Ratio = 16
 uint8_t const MAG3110::MAG3110_DR_OS_80_16 =    0x00;
 uint8_t const MAG3110::MAG3110_DR_OS_40_32 =		0x08;
 uint8_t const MAG3110::MAG3110_DR_OS_20_64 =		0x10;
@@ -77,27 +72,22 @@ uint8_t const MAG3110::MAG3110_DR_OS_0_31_32 =  0xE8;
 uint8_t const MAG3110::MAG3110_DR_OS_0_16_64 =  0xF0;
 uint8_t const MAG3110::MAG3110_DR_OS_0_08_128 = 0xF8;
 
-// Other CTRL_REG1 Settings
 uint8_t const MAG3110::MAG3110_FAST_READ = 			     0x04;
 uint8_t const MAG3110::MAG3110_TRIGGER_MEASUREMENT = 0x02;
 uint8_t const MAG3110::MAG3110_ACTIVE_MODE =			   0x01;
 
-// CTRL_REG2 Settings
 uint8_t const MAG3110::MAG3110_AUTO_MRST_EN = 0x80;
 uint8_t const MAG3110::MAG3110_RAW_MODE = 	  0x20;
 uint8_t const MAG3110::MAG3110_MAG_RST =		  0x10;
 
-// SYSMOD Readings
 uint8_t const MAG3110::MAG3110_SYSMOD_STANDBY =    0x00;
 uint8_t const MAG3110::MAG3110_SYSMOD_ACTIVE_RAW = 0x01;
 uint8_t const MAG3110::MAG3110_SYSMOD_ACTIVE	=	   0x02;
 
-// AXES definitions
 uint8_t const MAG3110::MAG3110_X_AXIS = 0x01;
 uint8_t const MAG3110::MAG3110_Y_AXIS = 0x03;
 uint8_t const MAG3110::MAG3110_Z_AXIS = 0x05;
 
-// DR_STATUS readings
 uint8_t const MAG3110::MAG3110_DR_STATUS_XDR =   0x01;
 uint8_t const MAG3110::MAG3110_DR_STATUS_YDR =   0x02;   
 uint8_t const MAG3110::MAG3110_DR_STATUS_ZDR =   0x04;
@@ -227,7 +217,7 @@ void MAG3110::triggerMeasurement(void) const
 	writeRegister(MAG3110_CTRL_REG1, reg | MAG3110_TRIGGER_MEASUREMENT);
 }
 
-bool MAG3110::dataReady(void) const
+bool MAG3110::isDataReady(void) const
 {
   uint8_t reg = readRegister(MAG3110_DR_STATUS);
   return ((reg & MAG3110_DR_STATUS_XYZDR) >> 3);
@@ -339,12 +329,13 @@ void MAG3110::calibrate(void)
   int bymin = INT16_MAX, bymax = INT16_MIN;
   int bzmin = INT16_MAX, bzmax = INT16_MIN;
   bool changed;
+  bool state = isActive();
   auto start_calib = chrono::system_clock::now();
   chrono::high_resolution_clock::time_point end_calib;
+  start();
   do {
     changed = false;
-    triggerMeasurement();
-    getMag(&bx, &by, &bz);
+    getMagDelayed(&bx, &by, &bz);
 	  if (bx < bxmin) { bxmin = bx; changed = true; }
     if (bx > bxmax) { bxmax = bx; changed = true; }
     if (by < bymin) { bymin = by; changed = true; }
@@ -361,9 +352,12 @@ void MAG3110::calibrate(void)
     }
     end_calib = chrono::system_clock::now();
   } while (chrono::duration_cast<chrono::milliseconds>(
-      end_calib - start_calib).count() < CALIBRATION_TIMEOUT);
+      end_calib - start_calib).count() < (10 * m_delay));
   setOffset((bxmin+bxmax)/2, (bymin+bymax)/2, (bzmin+bzmax)/2);
   setRawMode(false);
+  if (!state) {
+    standby();
+  }
 }
 
 void MAG3110::getMag(int* t_bx, int* t_by, int* t_bz) const
@@ -395,19 +389,19 @@ void MAG3110::getMagDelayed(int* t_bx, int* t_by, int* t_bz) const
   getMag(t_bx, t_by, t_bz);
 }
 
-int MAG3110::getMagPoll(int* t_bx, int* t_by, int* t_bz) const
+void MAG3110::getMagPoll(int* t_bx, int* t_by, int* t_bz) const
 {
   int count = 0;
   triggerMeasurement();
   do {
     this_thread::sleep_for(chrono::microseconds(m_delay * 100));
     ++count; 
-  } while (!dataReady());
+  } while (!isDataReady());
   getMag(t_bx, t_by, t_bz);
   if (m_debug) {
-    cout << "getMagPoll: " << (count * m_delay * 0.1) << " ms" << endl;
+    cout << "getMagPoll: " << (count * m_delay * 0.1) 
+      << " ms, count: " << count << endl;
   }
-  return static_cast<int>(count * m_delay * 0.1);
 }
 
 double MAG3110::getMagnitude(int const& t_bx, int const& t_by, 
