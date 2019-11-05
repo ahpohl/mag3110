@@ -1,6 +1,8 @@
 #include <iostream>
+#include <cstring>
 #include <chrono>
 #include <thread>
+#include <errno.h>
 #include <wiringPi.h>
 #include "mag3110.hpp"
 
@@ -14,34 +16,43 @@
 
 using namespace std;
 
-int const INT_PIN = 7;
+int const MAG3110_PIN = 7;
+static volatile int globalCounter = 0;
 
-void myInterrupt (void)
+void magISR(void)
 {
-  ++globalCounter ;
+  ++globalCounter;
 }
 
 
 int main(int argc, char** argv)
 {
-  wiringPiSetup();  
-  pinMode(INT_PIN, INPUT);
-  pullUpDnControl (INT_PIN, PUD_DOWN);
+  if (wiringPiSetup() < 0)
+  {
+    throw runtime_error(string("Unable to setup wiringPi: ") + 
+      + strerror(errno) + " (" + to_string(errno) + ")");
+  }
+  if (wiringPiISR(MAG3110_PIN, INT_EDGE_RISING, &magISR) < 0)
+  {
+    throw runtime_error(string("Unable to setup ISR: ") + 
+      + strerror(errno) + " (" + to_string(errno) + ")");
+  }
   MAG3110 mag;
   mag.initialize("/dev/i2c-1");
   mag.reset();
-  mag.setDR_OS(MAG3110::MAG3110_DR_OS_0_63_128);
+  mag.setDR_OS(MAG3110::MAG3110_DR_OS_10_128);
   mag.start();
-
+  
+  int myCounter = 0;
   int bx, by, bz;
-  int state;
-
+  
   while (true) {
+    while (myCounter == globalCounter) {
+      this_thread::sleep_for(chrono::milliseconds(1));
+    }
     mag.getMag(&bx, &by, &bz);
-    //mag.displayMag(bx, by, bz);
-    this_thread::sleep_for(chrono::milliseconds(100));
-    state = digitalRead(INT_PIN);
-    cout << "Pin state: " << state << endl;
+    mag.displayMag(bx, by, bz);
+    myCounter = globalCounter;
   }
 
   return 0;
