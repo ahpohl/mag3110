@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cstring>
 #include <chrono>
 #include <thread>
@@ -17,11 +18,11 @@
 using namespace std;
 
 int const MAG3110_PIN = 7;
-static volatile int globalCounter = 0;
+static volatile bool isEvent = false;
 
 void magISR(void)
 {
-  ++globalCounter;
+  isEvent = true;
 }
 
 
@@ -40,19 +41,26 @@ int main(int argc, char** argv)
   MAG3110 mag;
   mag.initialize("/dev/i2c-1");
   mag.reset();
-  mag.setDR_OS(MAG3110::MAG3110_DR_OS_10_128);
+  mag.setDR_OS(MAG3110::MAG3110_DR_OS_0_63_16);
+  uint8_t dros = mag.getDR_OS();
+  cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
   mag.start();
   
   int myCounter = 0;
   int bx, by, bz;
+  chrono::high_resolution_clock::time_point start_isr, end_isr;
   
   while (true) {
-    while (myCounter == globalCounter) {
+    start_isr = chrono::system_clock::now();
+    while (!isEvent) {
       this_thread::sleep_for(chrono::milliseconds(1));
     }
     mag.getMag(&bx, &by, &bz);
     mag.displayMag(bx, by, bz);
-    myCounter = globalCounter;
+    isEvent = false;
+    end_isr = chrono::system_clock::now();
+    cout << "Duration: " << chrono::duration_cast<chrono::milliseconds>(
+      end_isr - start_isr).count() << " ms" << endl;
   }
 
   return 0;
