@@ -40,12 +40,20 @@ int main(int argc, char** argv)
   }
   MAG3110 mag;
   mag.initialize("/dev/i2c-1");
-  mag.reset();
-  mag.setDR_OS(MAG3110::MAG3110_DR_OS_0_63_16);
+  cout << (mag.isActive() ? "Mode: active" : "Mode: standby") << endl;
+
   uint8_t dros = mag.getDR_OS();
   cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
+
+  mag.reset();
+  dros = mag.getDR_OS();
+  cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
+
   mag.start();
-  
+  mag.setDR_OS(MAG3110::MAG3110_DR_OS_10_16);
+  dros = mag.getDR_OS();
+  cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
+
   int myCounter = 0;
   int bx, by, bz;
   chrono::high_resolution_clock::time_point start_isr, end_isr;
