@@ -286,6 +286,16 @@ public:
       @param t_raw True: enable active raw mode, false: disable active raw mode
       */
   void setRawMode(bool const t_raw) const;
+  /** @brief Set fast read
+
+      This function selects a fast read mode. In normal read mode, the full
+      16-bit values are read. With fast read enabled, 8-bit values are read
+      from the MSB registers (auto-increment skips over the LSB register
+      in burst-read mode).
+
+      @param t_fast True: enable fast read, false: disable fast read
+      */
+  void setFastRead(bool const t_fast) const
   /** @brief Trigger measurement
       
       This function triggers a measurement. In standby mode, the measurement will

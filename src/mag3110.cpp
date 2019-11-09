@@ -215,11 +215,22 @@ void MAG3110::setRawMode(bool const t_raw) const
   }
 }
 
+void MAG3110::setFastRead(bool const t_fast) const
+{
+  if (t_fast) {
+    writeRegister(MAG3110_CTRL_REG1, MAG3110::MAG3110_FAST_READ | (1 << 3));
+  } else {
+    writeRegister(MAG3110_CTRL_REG1, MAG3110::MAG3110_FAST_READ & ~(1 << 3));
+  }
+}
+
 void MAG3110::triggerMeasurement(void) const
 {	
 	uint8_t reg = readRegister(MAG3110_CTRL_REG1);
 	writeRegister(MAG3110_CTRL_REG1, reg | MAG3110_TRIGGER_MEASUREMENT);
 }
+
+
 
 bool MAG3110::isDataReady(void) const
 {
@@ -230,7 +241,9 @@ bool MAG3110::isDataReady(void) const
 void MAG3110::setDR_OS(uint8_t const t_DROS)
 {
   bool status = isActive();
-  standby();
+  if (status) {
+    standby();
+  }
   uint8_t reg = readRegister(MAG3110_CTRL_REG1) & 0x07;
   writeRegister(MAG3110_CTRL_REG1, reg | t_DROS);
   setDelay(t_DROS);

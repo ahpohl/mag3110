@@ -22,6 +22,7 @@ int main(int argc, char** argv)
   cout << hex << setiosflags(ios::showbase);
 
   mag.initialize("/dev/i2c-1");
+  mag.reset();
   mag.start();
 
   mag.setDR_OS(MAG3110::MAG3110_DR_OS_80_16);
