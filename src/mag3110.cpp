@@ -184,10 +184,11 @@ void MAG3110::start(void) const
 
 void MAG3110::reset(void)
 {
-  writeRegister(MAG3110_CTRL_REG1, 0x00);
+  standby();
+  setDR_OS(MAG3110_DR_OS_80_16);
   writeRegister(MAG3110_CTRL_REG2, MAG3110_MAG_RST | MAG3110_AUTO_MRST_EN);
+  setRawMode(false);
   setOffset(0, 0, 0);
-  setDelay(MAG3110_DR_OS_80_16);
   readRegister(MAG3110_OUT_X_MSB);
   readRegister(MAG3110_OUT_Y_MSB);
   readRegister(MAG3110_OUT_Z_MSB);
@@ -228,14 +229,14 @@ bool MAG3110::isDataReady(void) const
 
 void MAG3110::setDR_OS(uint8_t const t_DROS)
 {
+  bool status = isActive();
   standby();
-  this_thread::sleep_for(chrono::milliseconds(100));
   uint8_t reg = readRegister(MAG3110_CTRL_REG1) & 0x07;
-  this_thread::sleep_for(chrono::milliseconds(100));
   writeRegister(MAG3110_CTRL_REG1, reg | t_DROS);
-  this_thread::sleep_for(chrono::milliseconds(100));
   setDelay(t_DROS);
-  this_thread::sleep_for(chrono::milliseconds(100));
+  if (status) {
+    start();
+  }
 }
 
 uint8_t MAG3110::getDR_OS(void) const
