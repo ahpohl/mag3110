@@ -295,7 +295,7 @@ public:
 
       @param t_fast True: enable fast read, false: disable fast read
       */
-  void setFastRead(bool const t_fast) const
+  void setFastRead(bool const t_fast) const;
   /** @brief Trigger measurement
       
       This function triggers a measurement. In standby mode, the measurement will

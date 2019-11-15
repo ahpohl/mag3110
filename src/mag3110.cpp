@@ -185,6 +185,7 @@ void MAG3110::start(void) const
 void MAG3110::reset(void)
 {
   standby();
+  setFastRead(false);
   setDR_OS(MAG3110_DR_OS_80_16);
   writeRegister(MAG3110_CTRL_REG2, MAG3110_MAG_RST | MAG3110_AUTO_MRST_EN);
   setRawMode(false);
