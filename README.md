@@ -6,7 +6,7 @@ Freescale’s MAG3110 is a small, low-power, digital 3-axis magnetometer. The de
 
 ## Software
 
-This library has been derived from the <a href="https://github.com/sparkfun/SparkFun_MAG3110_Breakout_Board_Arduino_Library" target="_blank">Sparkfun Arduino library</a> to C++ to allow embedded devices such as the Raspberry Pi with an I<SUP>2</SUP>C bus to use the breakout board directly. It uses much of the same API as the original library. However, a couple of methods have been renamed, added or removed. The complete documentation of the MAG3110 class and its methods can be found [here] including some basic examples to get you started.
+The MAG3110 library has been derived from the <a href="https://github.com/sparkfun/SparkFun_MAG3110_Breakout_Board_Arduino_Library" target="_blank">Sparkfun Arduino library</a> to C++ to allow embedded devices such as the Raspberry Pi with an I<SUP>2</SUP>C bus to use the breakout board directly. It uses much of the same API as the original library. However, a couple of methods have been renamed, added or removed. The complete documentation of the MAG3110 class and its methods can be found [here] including some basic examples to get you started. The source code can be downloaded from the <a href="https://github.com/ahpohl/mag3110" target="_blank">MAG3110 GitHub repository</a>.
 
 ## License
 
