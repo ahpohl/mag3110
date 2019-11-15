@@ -22,8 +22,12 @@ for the JavaScript code in this file
 */
 var NAVTREE =
 [
-  [ "Mag3110", "index.html", [
-    [ "Documentation", "index.html", null ],
+  [ "MAG3110", "index.html", [
+    [ "Documentation", "index.html", [
+      [ "Hardware", "index.html#autotoc_md1", null ],
+      [ "Software", "index.html#autotoc_md2", null ],
+      [ "License", "index.html#autotoc_md3", null ]
+    ] ],
     [ "Data Structures", "annotated.html", [
       [ "Data Structures", "annotated.html", "annotated_dup" ],
       [ "Data Structure Index", "classes.html", null ],

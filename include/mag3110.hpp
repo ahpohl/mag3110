@@ -7,7 +7,6 @@
     This class is derived from the <a href="https://github.com/sparkfun/SparkFun_MAG3110_Breakout_Board_Arduino_Library" target="_blank">Sparkfun Arduino library</a> and has been ported to plain C++.
  
     @author Alexander Pohl <alex@ahpohl.com>
-    @date November 2019
     */
 
 class MAG3110
