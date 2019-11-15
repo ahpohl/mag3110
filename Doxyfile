@@ -51,14 +51,14 @@ PROJECT_BRIEF          = "A C++ library for the SparkFun 3-axis magnetometer bre
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = doc/images/breakout_board_scaled_96x96.jpg
+PROJECT_LOGO           = docs/images/breakout_board_scaled_96x96.jpg
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY       = docs
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -831,7 +831,7 @@ WARN_LOGFILE           =
 
 INPUT                  = src \
                          include \
-                         doc/pages
+                         docs/pages
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1225,7 +1225,7 @@ HTML_EXTRA_STYLESHEET  =
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = doc/pdf/MAG3110_reference.pdf
+HTML_EXTRA_FILES       = docs/pdf/MAG3110_reference.pdf
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
