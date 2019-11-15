@@ -73,6 +73,5 @@ var searchData=
   ['mag3110_5fwho_5fam_5fi_5frsp_86',['MAG3110_WHO_AM_I_RSP',['../class_m_a_g3110.html#ab7e9fb986081927ee5a2b39084960958',1,'MAG3110']]],
   ['mag3110_5fx_5faxis_87',['MAG3110_X_AXIS',['../class_m_a_g3110.html#a44cb2612220d07eaabdf8e1d390ccfd8',1,'MAG3110']]],
   ['mag3110_5fy_5faxis_88',['MAG3110_Y_AXIS',['../class_m_a_g3110.html#acb200534a12c01fcb82b2607b175a869',1,'MAG3110']]],
-  ['mag3110_5fz_5faxis_89',['MAG3110_Z_AXIS',['../class_m_a_g3110.html#a3529791cf8a69886a111d54d3965caeb',1,'MAG3110']]],
-  ['mainpage_2edox_90',['mainpage.dox',['../mainpage_8dox.html',1,'']]]
+  ['mag3110_5fz_5faxis_89',['MAG3110_Z_AXIS',['../class_m_a_g3110.html#a3529791cf8a69886a111d54d3965caeb',1,'MAG3110']]]
 ];

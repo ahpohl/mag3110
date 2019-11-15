@@ -1,9 +1,3 @@
-/** @brief Documentation for my project
-    @author Alexander Pohl
-    @file Mainpage.dox
-    */
-
-/**
-    @mainpage Demonstration API
+/** @mainpage Documentation
     This is a simple demonstration of getting Doxygen output to GitHub
     */
