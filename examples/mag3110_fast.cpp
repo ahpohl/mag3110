@@ -3,7 +3,7 @@
 #include <thread>
 #include "mag3110.hpp"
 
-/** @brief Fast read
+/** @example mag3110_fast.cpp
 
     Basic example to read the magnetic field from the MAG3110 sensor as
     fast as possible

@@ -3,7 +3,7 @@
 #include <thread>
 #include "mag3110.hpp"
 
-/** @brief Basic
+/** @example mag3110_poll.cpp
 
     Poll magnetic field from the MAG3110 sensor. Wait until new magnetic field
     data is available.

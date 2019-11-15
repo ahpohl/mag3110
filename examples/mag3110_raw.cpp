@@ -3,7 +3,7 @@
 #include <thread>
 #include "mag3110.hpp"
 
-/** @brief Basic
+/** @example mag3110_raw.cpp
 
     Basic example to read the magnetic field from the MAG3110 sensor
 

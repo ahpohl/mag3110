@@ -7,7 +7,7 @@
 #include <wiringPi.h>
 #include "mag3110.hpp"
 
-/** @brief Basic
+/** @example mag3110_interrupt.cpp
 
     Example to use interrupt output pin of MAG3110 sensor.
 

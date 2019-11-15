@@ -3,7 +3,7 @@
 #include <thread>
 #include "mag3110.hpp"
 
-/** @brief Triggered
+/** @example mag3110_triggered.cpp
 
     Trigger measurements
 

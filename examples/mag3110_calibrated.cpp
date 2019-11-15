@@ -3,7 +3,7 @@
 #include <thread>
 #include "mag3110.hpp"
 
-/** @brief Basic
+/** @example mag3110_calibrated.cpp
 
     Calibrate the magnetic field from the MAG3110 sensor by applying an
     offset to the raw sensor values

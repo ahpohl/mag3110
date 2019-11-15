@@ -4,7 +4,7 @@
 #include <thread>
 #include "mag3110.hpp"
 
-/** @brief Data rate
+/** @example mag3110_dros.cpp
 
     This example sets different data rates.
 
