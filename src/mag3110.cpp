@@ -174,6 +174,7 @@ void MAG3110::standby(void) const
 {
   uint8_t reg = readRegister(MAG3110_CTRL_REG1);
   writeRegister(MAG3110_CTRL_REG1, reg & ~(MAG3110_ACTIVE_MODE));
+  this_thread::sleep_for(chrono::milliseconds(m_delay));
 }
 
 void MAG3110::start(void) const
