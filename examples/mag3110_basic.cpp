@@ -3,13 +3,9 @@
 #include <thread>
 #include "mag3110.hpp"
 
-/** @example mag3110_basic.cpp
+/** @example{lineno} mag3110_basic.cpp
 
     Basic example to read the magnetic field from the MAG3110 sensor
-
-    Compile with
-    g++ mag3110_basic.cpp -o basic -lmag3110 -L../ -I../include -static 
-
     */
 
 using namespace std;

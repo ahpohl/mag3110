@@ -6,10 +6,6 @@
 /** @example mag3110_active.cpp
 
     Basic example to read the magnetic field from the MAG3110 sensor
-
-    Compile with
-    g++ mag3110_active.cpp -o active -lmag3110 -L../ -I../include -static 
-
     */
 
 using namespace std;

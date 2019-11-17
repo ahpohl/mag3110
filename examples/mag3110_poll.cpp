@@ -7,10 +7,6 @@
 
     Poll magnetic field from the MAG3110 sensor. Wait until new magnetic field
     data is available.
-
-    Compile with
-    g++ mag3110_poll.cpp -o poll -lmag3110 -L../ -I../include -static 
-
     */
 
 using namespace std;

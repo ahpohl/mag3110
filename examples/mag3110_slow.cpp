@@ -7,10 +7,6 @@
 
     Basic example to read the magnetic field from the MAG3110 sensor as
     slow as possible
-
-    Compile with
-    g++ mag3110_slow.cpp -o slow -lmag3110 -L../ -I../include -static 
-
     */
 
 using namespace std;

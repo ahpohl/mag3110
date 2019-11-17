@@ -7,10 +7,6 @@
 /** @example mag3110_dros.cpp
 
     This example sets different data rates.
-
-    Compile with
-    g++ mag3110_dros.cpp -o dros -lmag3110 -L../ -I../include -static 
-
     */
 
 using namespace std;

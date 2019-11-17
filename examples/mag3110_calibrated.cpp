@@ -7,11 +7,6 @@
 
     Calibrate the magnetic field from the MAG3110 sensor by applying an
     offset to the raw sensor values
-
-    Compile with
-    g++ mag3110_calibrated.cpp -o calibrated -lmag3110 -L../ -I../include 
-    -static 
-
     */
 
 using namespace std;

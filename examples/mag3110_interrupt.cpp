@@ -10,9 +10,6 @@
 /** @example mag3110_interrupt.cpp
 
     Example to use interrupt output pin of MAG3110 sensor.
-
-    Compile with
-    g++ mag3110_interrupt.cpp -o interrupt -Wl,-Bstatic -lmag3110 -Wl,-Bdynamic -lwiringPi -L../ -I../include
     */
 
 using namespace std;

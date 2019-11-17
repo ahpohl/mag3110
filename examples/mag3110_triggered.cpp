@@ -6,10 +6,6 @@
 /** @example mag3110_triggered.cpp
 
     Trigger measurements
-
-    Compile with
-    g++ mag3110_triggered.cpp -o triggered -lmag3110 -L../ -I../include -static 
-
     */
 
 using namespace std;
