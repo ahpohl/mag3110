@@ -51,7 +51,6 @@ int main(int argc, char** argv)
   dros = mag.getDR_OS();
   cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
 
-  int myCounter = 0;
   int bx, by, bz;
   chrono::high_resolution_clock::time_point start_isr, end_isr;
   
