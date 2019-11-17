@@ -5,7 +5,7 @@
 
 /** @example mag3110_basic.cpp
 
-    Basic example to read the magnetic field from the MAG3110 sensor
+    Basic example to read the magnetic field.
     */
 
 using namespace std;

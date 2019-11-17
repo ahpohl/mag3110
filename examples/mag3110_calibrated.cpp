@@ -5,8 +5,8 @@
 
 /** @example mag3110_calibrated.cpp
 
-    Calibrate the magnetic field from the MAG3110 sensor by applying an
-    offset to the raw sensor values
+    Calibrate the magnetic field to read approximately zero by applying an
+    offset to the raw sensor values.
     */
 
 using namespace std;

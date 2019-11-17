@@ -5,7 +5,7 @@
 
 /** @example mag3110_active.cpp
 
-    Basic example to read the magnetic field from the MAG3110 sensor
+    Basic example to put the chip in active and standby mode.
     */
 
 using namespace std;
