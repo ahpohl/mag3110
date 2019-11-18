@@ -13,9 +13,11 @@ LFLAGS =
 # define any libraries to link into executable:
 LIBS =
 
-# define src and obj directories
+# define src directory
 SRC_DIR = src
-OBJ_DIR = obj
+
+# define the object directory
+OBJ_DIR = build
 
 # define the C source files
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
