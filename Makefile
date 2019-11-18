@@ -26,8 +26,8 @@ SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 # define the executable file 
-STATIC_LIB = libmag3110.a
-SHARED_LIB = libmag3110.so
+STATIC_LIB = $(OBJ_DIR)/libmag3110.a
+SHARED_LIB = $(OBJ_DIR)/libmag3110.so
 
 # get version info from git and compile into the program
 # https://embeddedartistry.com/blog/2016/10/27/giving-you-build-a-version
@@ -50,24 +50,24 @@ CPPFLAGS += -DVERSION_BUILD_DATE=\""$(shell date "+%F %T")"\" \
             -DVERSION_TAG=\"$(BUILD_TAG)\" \
             -DVERSION_BUILD=\"$(BUILD_INFO)\"
 
-.PHONY: depend clean install docs
+.PHONY: build clean install docs
 
 all: shared static
 
-shared: $(OBJS)
+build:
+	mkdir -p $(OBJ_DIR)
+
+shared: build $(OBJS)
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -o $(SHARED_LIB) $(OBJS) $(LFLAGS) $(LIBS)
 
-static:
-	ar rcs $(STATIC_LIB) $(OBJS)
+static: build $(OBJS)
+	$(AR) rcs $(STATIC_LIB) $(OBJS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) $(OBJS) *~ $(SHARED_LIB) $(STATIC_LIB)
-
-depend: $(SRCS)
-	makedepend $(INCLUDES) $^
+	$(RM) $(OBJS) $(SHARED_LIB) $(STATIC_LIB) *~
 
 # define install directories
 ifeq ($(PREFIX),)
