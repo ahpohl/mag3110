@@ -7,14 +7,14 @@ CPPFLAGS := -Wall -g -std=c++11 -pthread
 # define any directories containing header files other than /usr/include
 INCLUDES := -I../include
 
+# define build directory
+BUILD := ../build
+
 # define library paths in addition to /usr/lib
-LFLAGS := -L../build
+LFLAGS := -L$(BUILD)
 
 # define any libraries to link into executable:
 LIBS := -Wl,-Bstatic -lmag3110 -Wl,-Bdynamic -lwiringPi
-
-# define build directory
-BUILD := ../build
 
 # define examples
 BASIC := $(BUILD)/basic
