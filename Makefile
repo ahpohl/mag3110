@@ -68,6 +68,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	$(RM) $(OBJS) $(SHARED_LIB) $(STATIC_LIB) *~
+	$(MAKE) -C $(EX) clean
 
 # define install directories
 ifeq ($(PREFIX),)

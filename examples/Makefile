@@ -13,14 +13,18 @@ LFLAGS := -L../build
 # define any libraries to link into executable:
 LIBS := -Wl,-Bstatic -lmag3110 -Wl,-Bdynamic -lwiringPi
 
-BASIC := mag3110_basic
+# define build directory
+BUILD := ../build
+
+# define examples
+BASIC := $(BUILD)/basic
 
 .PHONY: clean
 
 all: $(BASIC)
 
 $(BASIC):
-	$(CPP) $(BASIC).cpp $(CPPFLAGS) $(INCLUDES) $(LFLAGS) $(LIBS) -o $(BASIC)
+	$(CPP) mag3110_basic.cpp $(CPPFLAGS) $(INCLUDES) $(LFLAGS) $(LIBS) -o $(BASIC)
 
 clean:
 	$(RM) $(BASIC) *~
