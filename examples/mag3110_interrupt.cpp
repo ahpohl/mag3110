@@ -9,7 +9,9 @@
 
 /** @example mag3110_interrupt.cpp
 
-    Example to use interrupt output pin of MAG3110 sensor.
+    This example uses the interrupt output pin of the MAG3110 sensor and waits
+    until new data is available before reading the magnetic field. It uses
+    the wiringPi library to setup a gpio pin as an interrupt on a rising edge.
     */
 
 using namespace std;

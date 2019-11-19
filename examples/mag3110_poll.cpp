@@ -5,8 +5,8 @@
 
 /** @example mag3110_poll.cpp
 
-    Poll magnetic field from the MAG3110 sensor. Wait until new magnetic field
-    data is available.
+    This example polls the chip and waits until new data is available before
+    reading the magnetic field.
     */
 
 using namespace std;

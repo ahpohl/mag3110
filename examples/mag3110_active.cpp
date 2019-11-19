@@ -5,7 +5,7 @@
 
 /** @example mag3110_active.cpp
 
-    Basic example to put the chip in active and standby mode.
+    This example puts the chip in active and standby mode.
     */
 
 using namespace std;

@@ -5,7 +5,8 @@
 
 /** @example mag3110_triggered.cpp
 
-    Trigger measurements
+    This example actively triggers measurements of the magnetic field. After
+    each sensor read, the chip goes automatically back into standby mode.
     */
 
 using namespace std;
@@ -19,7 +20,8 @@ int main(int argc, char** argv)
 
   int bx, by, bz;
   while (true) {
-    mag.triggerMeasurement();  
+    cout << (mag.isActive() ? "Mode: active" : "Mode: standby") << endl;
+    mag.triggerMeasurement();
     mag.getMag(&bx, &by, &bz);
     mag.displayMag(bx, by, bz);
     this_thread::sleep_for(chrono::seconds(1));

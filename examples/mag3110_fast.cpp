@@ -5,8 +5,7 @@
 
 /** @example mag3110_fast.cpp
 
-    Basic example to read the magnetic field from the MAG3110 sensor as
-    fast as possible
+    This example reads the magnetic field as fast as possible (80 Hz).
     */
 
 using namespace std;
