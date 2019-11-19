@@ -16,7 +16,7 @@ LIBS =
 # define src directory
 SRC_DIR = src
 
-# define the object directory
+# define the output directory
 OBJ_DIR = build
 
 # define the C source files
@@ -25,7 +25,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 # define the objects
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-# define the executable file 
+# define the file names 
 STATIC_LIB = $(OBJ_DIR)/libmag3110.a
 SHARED_LIB = $(OBJ_DIR)/libmag3110.so
 
@@ -81,3 +81,6 @@ install: all
 
 docs:
 	doxygen Doxyfile
+
+examples:
+	$(MAKE) -C examples/Makefile
