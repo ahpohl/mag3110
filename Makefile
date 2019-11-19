@@ -50,7 +50,7 @@ CPPFLAGS += -DVERSION_BUILD_DATE=\""$(shell date "+%F %T")"\" \
             -DVERSION_TAG=\"$(BUILD_TAG)\" \
             -DVERSION_BUILD=\"$(BUILD_INFO)\"
 
-.PHONY: build clean install docs
+.PHONY: build clean install docs examples
 
 all: shared static
 
@@ -82,5 +82,8 @@ install: all
 docs:
 	doxygen Doxyfile
 
-examples:
-	$(MAKE) -C examples/Makefile
+# define examples directory
+EX := examples
+
+examples: all
+	$(MAKE) -C $(EX)
