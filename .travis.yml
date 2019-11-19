@@ -1,20 +1,21 @@
-sudo: false
+sudo: false 
+
 branches:
   only:
-  - master
+    - master
+
 addons:
   apt:
     packages:
-    - doxygen
+      - doxygen
+
 script:
-- doxygen Doxyfile
+  - doxygen Doxyfile
+
 deploy:
   provider: pages
   skip_cleanup: true
   local_dir: docs/html
-  github_token: "$GH_REPO_TOKEN"
+  github_token: $GITHUB_TOKEN
   on:
     branch: master
-env:
-  global:
-    secure: N/BGVRK7xIDsBgFaiDybmAIDW3pc87w/ALYTmZXkBOJoD+hZoIPoviiEXCz90raQcTVNPsgdA2yINiJVTw4foUSoKYaBgYP06rX5mCq4/TSqd9yvcANvTEQ/PICzupQCRiXXV7s89YEKKaDkl3STZou2m7RmScvaRjGv2WSCk65IrC/9fYE3V3mqPducrb/hSP9+myukp+w5Hx0vpQ2fqrFaaaUc97kRYdsLzXjbPDh5BmjsDbf8PwPdPVFeHclVENa7XhX/yLdKT3KvsLnvkioFGfi7ZIpQaO8xQqc+gPv4iLmX2JZUkya6rVXM5DtWABO9XNQ4drijr3nDngCPEW52OtyKU6VZzULLZVO/ruxcNvfUAUBTddyina7FRxdQA6Ieezbp4F1wrsYqU7Nuxbqe6mI5SSQfqKNzVGZkonbNozWizoucmRoh3R/DX1gF/KTFB5C3IuLur4lF434sHddZ7TLuhNLdiT+WBWBpUkBpadXl8n+OXsyAMHImxtrEjUCCyEaLkWDOuYzCQKm7wNDoAUrw9ewqj80GKh6DH7B3t2V0jm9Ul90d3OsCoJ816U9G4gIPHqPaAJSZ8Aw55o8T4bdjKUkp6n5KaMkyK0HPqbX/i3d3W3DFcB7lP3EJkQxhevy9cFOtW97gcZm0H033xTNj7BYjww8SzWM2V2w=
