@@ -1,10 +1,3 @@
-#
-# 'make depend' uses makedepend to automatically generate dependencies 
-#               (dependencies are added to end of Makefile)
-# 'make'        build executable file 'mycc'
-# 'make clean'  removes all .o and executable files
-#
-
 # define the C compiler to use
 CPP = g++
 
@@ -12,45 +5,32 @@ CPP = g++
 CPPFLAGS = -Wall -Wextra -g -std=c++11 -pthread -fPIC -shared
 
 # define any directories containing header files other than /usr/include
-#
 INCLUDES = -I./include
 
 # define library paths in addition to /usr/lib
-#   if I wanted to include libraries not in /usr/lib I'd specify
-#   their path using -Lpath, something like:
 LFLAGS =
 
 # define any libraries to link into executable:
-#   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
-#   option, something like (this will link in libmylib.so and libm.so:
 LIBS =
 
-# define src and obj directories
+# define src directory
 SRC_DIR = src
-OBJ_DIR = obj
+
+# define the output directory
+OBJ_DIR = build
 
 # define the C source files
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 
-# define the C object files 
-#
-# This uses Suffix Replacement within a macro:
-#   $(name:string1=string2)
-#         For each word in 'name' replace 'string1' with 'string2'
-# Below we are replacing the suffix .c of all words in the macro SRCS
-# with the .o suffix
-#
+# define the objects
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-# define the executable file 
-STATIC_LIB = libmag3110.a
-SHARED_LIB = libmag3110.so
+# define the file names 
+STATIC_LIB = $(OBJ_DIR)/libmag3110.a
+SHARED_LIB = $(OBJ_DIR)/libmag3110.so
 
-#
 # get version info from git and compile into the program
 # https://embeddedartistry.com/blog/2016/10/27/giving-you-build-a-version
-#
-
 version := $(subst -, ,$(shell git describe --long --dirty --tags))
 COMMIT := $(strip $(word 3, $(version)))
 COMMITS_PAST := $(strip $(word 2, $(version)))
@@ -70,34 +50,24 @@ CPPFLAGS += -DVERSION_BUILD_DATE=\""$(shell date "+%F %T")"\" \
             -DVERSION_TAG=\"$(BUILD_TAG)\" \
             -DVERSION_BUILD=\"$(BUILD_INFO)\"
 
-#
-# The following part of the makefile is generic; it can be used to 
-# build any executable just by changing the definitions above and by
-# deleting dependencies appended to the file from 'make depend'
-#
-
-.PHONY: depend clean install docs
+.PHONY: build clean install docs examples
 
 all: shared static
 
-shared: $(OBJS)
+build:
+	mkdir -p $(OBJ_DIR)
+
+shared: build $(OBJS)
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -o $(SHARED_LIB) $(OBJS) $(LFLAGS) $(LIBS)
 
-static:
-	ar rcs $(STATIC_LIB) $(OBJS)
+static: build $(OBJS)
+	$(AR) rcs $(STATIC_LIB) $(OBJS)
 
-# this is a suffix replacement rule for building .o's from .c's
-# it uses automatic variables $<: the name of the prerequisite of
-# the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
-# (see the gnu make manual section about automatic variables)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) $(OBJS) *~ $(SHARED_LIB) $(STATIC_LIB)
-
-depend: $(SRCS)
-	makedepend $(INCLUDES) $^
+	$(RM) $(OBJS) $(SHARED_LIB) $(STATIC_LIB) *~
 
 # define install directories
 ifeq ($(PREFIX),)
@@ -111,4 +81,9 @@ install: all
 
 docs:
 	doxygen Doxyfile
-# DO NOT DELETE THIS LINE -- make depend needs it
+
+# define examples directory
+EX := examples
+
+examples: all
+	$(MAKE) -C $(EX)
