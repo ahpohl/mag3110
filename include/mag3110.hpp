@@ -247,7 +247,7 @@ public:
 
       This function puts the chip into standby mode.
       */
-  void standby(void) const;
+  void standby(void);
   /** @brief Start
 
       This function puts the chip into operation mode.

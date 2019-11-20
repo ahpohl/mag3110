@@ -1,30 +1,40 @@
 # define the C compiler to use
-CPP := g++
+CPP = g++
 
 # define any compile-time flags
-CPPFLAGS := -Wall -g -std=c++11 -pthread
+CPPFLAGS = -Wall -g -std=c++11 -pthread -c
 
 # define any directories containing header files other than /usr/include
-INCLUDES := -I../include
+INCLUDES = -I../include
 
 # define build directory
-BUILD := ../build
+BUILD = ../build
 
 # define library paths in addition to /usr/lib
-LFLAGS := -L$(BUILD)
+LFLAGS = -L$(BUILD)
 
 # define any libraries to link into executable:
-LIBS := -Wl,-Bstatic -lmag3110 -Wl,-Bdynamic -lwiringPi
+LIBS = -Wl,-Bstatic -lmag3110 -Wl,-Bdynamic -lwiringPi
 
-# define examples
-BASIC := $(BUILD)/basic
+# define source files
+SRCS = $(wildcard *.cpp)
 
-.PHONY: clean
+# define object files
+OBJS = $(SRCS:.cpp=.o)
 
-all: $(BASIC)
+# define executables
+EXECS = $(OBJS:%.o=%)
 
-$(BASIC):
-	$(CPP) mag3110_basic.cpp $(CPPFLAGS) $(INCLUDES) $(LFLAGS) $(LIBS) -o $(BASIC)
+.PHONY: all clean
+
+all: $(OBJS)
+
+.cpp.o:
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $< -o $@
+
+.o.:
+	$(CPP) $< $(LFLAGS) $(LIBS) -o $@
 
 clean:
-	$(RM) $(BASIC) *~
+	-@ $(RM) *.o
+	-@ $(RM) $(EXECS)

@@ -50,6 +50,9 @@ CPPFLAGS += -DVERSION_BUILD_DATE=\""$(shell date "+%F %T")"\" \
             -DVERSION_TAG=\"$(BUILD_TAG)\" \
             -DVERSION_BUILD=\"$(BUILD_INFO)\"
 
+# define examples directory
+EXAMPLE := examples
+
 .PHONY: build clean install docs examples
 
 all: shared static
@@ -68,7 +71,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	$(RM) $(OBJS) $(SHARED_LIB) $(STATIC_LIB) *~
-	$(MAKE) -C $(EX) clean
+	$(MAKE) -C $(EXAMPLE) clean
 
 # define install directories
 ifeq ($(PREFIX),)
@@ -83,8 +86,5 @@ install: all
 docs:
 	doxygen Doxyfile
 
-# define examples directory
-EX := examples
-
 examples: all
-	$(MAKE) -C $(EX)
+	$(MAKE) -C $(EXAMPLE)

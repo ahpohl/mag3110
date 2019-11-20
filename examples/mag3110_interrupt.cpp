@@ -11,7 +11,9 @@
 
     This example uses the interrupt output pin of the MAG3110 sensor and waits
     until new data is available before reading the magnetic field. It uses
-    the wiringPi library to setup a gpio pin as an interrupt on a rising edge.
+    the <a href="https://github.com/WiringPi/WiringPi"
+    target="_blank">wiringPi library</a> to setup a gpio pin as an interrupt
+    on a rising edge.
     */
 
 using namespace std;
@@ -39,20 +41,13 @@ int main(int argc, char** argv)
   }
   MAG3110 mag;
   mag.initialize("/dev/i2c-1");
-  cout << (mag.isActive() ? "Mode: active" : "Mode: standby") << endl;
-
+  mag.reset();
+  
+  mag.setDR_OS(MAG3110::MAG3110_DR_OS_5_16);
   uint8_t dros = mag.getDR_OS();
   cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
 
-  mag.reset();
-  dros = mag.getDR_OS();
-  cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
-
   mag.start();
-  mag.setDR_OS(MAG3110::MAG3110_DR_OS_10_16);
-  dros = mag.getDR_OS();
-  cout << "DR_OS: " << static_cast<unsigned int>(dros) << endl;
-
   int bx, by, bz;
   chrono::high_resolution_clock::time_point start_isr, end_isr;
   

@@ -170,10 +170,12 @@ void MAG3110::writeRegister(uint8_t const& t_addr, uint8_t const& t_val) const
   this_thread::sleep_for(chrono::microseconds(2)); 
 }
 
-void MAG3110::standby(void) const
+void MAG3110::standby(void)
 {
   uint8_t reg = readRegister(MAG3110_CTRL_REG1);
   writeRegister(MAG3110_CTRL_REG1, reg & ~(MAG3110_ACTIVE_MODE));
+  uint8_t dros = getDR_OS();
+  setDelay(dros);
   this_thread::sleep_for(chrono::milliseconds(m_delay));
 }
 
