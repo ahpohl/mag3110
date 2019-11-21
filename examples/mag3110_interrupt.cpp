@@ -11,8 +11,8 @@
 
     This example uses the interrupt output pin of the MAG3110 sensor and waits
     until new data is available before reading the magnetic field. It uses
-    the <a href="https://github.com/WiringPi/WiringPi"
-    target="_blank">wiringPi library</a> to setup a gpio pin as an interrupt
+    the <a href="http://wiringpi.com/" 
+    target="_blank">wiringPi</a> library to setup a gpio pin as an interrupt
     on a rising edge.
     */
 
