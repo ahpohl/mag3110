@@ -7,9 +7,9 @@ Freescale’s MAG3110 is a small, low-power, digital 3-axis magnetometer. The de
 ## Links
 
 * <a href="https://github.com/ahpohl/mag3110" target="_blank">Source Code on GitHub</a>
-* <a href="../pdf/MAG3110_reference.pdf" target="_blank">Hardware Technical Reference Documentation</a>
+* <a href="MAG3110_reference.pdf" target="_blank">Hardware Technical Reference Documentation</a>
 * <a href="https://github.com/sparkfun/SparkFun_MAG3110_Breakout_Board_Arduino_Library" target="_blank">Sparkfun Arduino Library</a>
 
 ## License
 
-The library is licensed under the GNU Public License - see the <a href="../../LICENSE" target="_blank">LICENSE</a> file for details. The library is provided as-is without any warranty given.
+The library is licensed under the GNU Public License - see the <a href="LICENSE" target="_blank">LICENSE</a> file for details. The library is provided as-is without any warranty given.
