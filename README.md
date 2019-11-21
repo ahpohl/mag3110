@@ -10,4 +10,4 @@ Freescale’s MAG3110 is a small, low-power, digital 3-axis magnetometer. The de
 
 ## License
 
-The library is licensed under the GNU Public License - see the [LICENSE](LICENSE) file for details. The library is provided as-is without any warranty given.
+The library is licensed under the GNU Public License - see the [LICENSE](LICENSE.md) file for details. The library is provided as-is without any warranty given.
