@@ -76,14 +76,14 @@ clean:
 	$(MAKE) -C $(EXAMPLE) clean
 
 # define install directories
-ifeq ($(DESTDIR),)
-  DESTDIR = /usr/local/lib
+ifeq ($(PREFIX),)
+  PREFIX = /usr/local
 endif
 
 install: all
-	install -d $(DESTDIR)
-	install -m 644 $(OBJ_DIR)/$(STATIC_LIB) $(DESTDIR)/$(STATIC_LIB)
-	install -m 755 $(OBJ_DIR)/$(SHARED_LIB) $(DESTDIR)/$(SHARED_LIB).$(LIB_VERSION)
+	install -d $(PREFIX)/lib
+	install -m 644 $(OBJ_DIR)/$(STATIC_LIB) $(DESTDIR)/$(PREFIX)/lib/$(STATIC_LIB)
+	install -m 755 $(OBJ_DIR)/$(SHARED_LIB) $(DESTDIR)/$(PREFIX)/lib/$(SHARED_LIB).$(LIB_VERSION)
 
 docs:
 	doxygen Doxyfile
