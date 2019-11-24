@@ -26,8 +26,8 @@ SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 # define the file names 
-STATIC_LIB = $(OBJ_DIR)/libmag3110.a
-SHARED_LIB = $(OBJ_DIR)/libmag3110.so
+STATIC_LIB = libmag3110.a
+SHARED_LIB = libmag3110.so
 
 # get version info from git and compile into the program
 # https://embeddedartistry.com/blog/2016/10/27/giving-you-build-a-version
@@ -50,6 +50,8 @@ CPPFLAGS += -DVERSION_BUILD_DATE=\""$(shell date "+%F %T")"\" \
             -DVERSION_TAG=\"$(BUILD_TAG)\" \
             -DVERSION_BUILD=\"$(BUILD_INFO)\"
 
+LIB_VERSION := $(BUILD_TAG:v%=%)
+
 # define examples directory
 EXAMPLE := examples
 
@@ -61,16 +63,16 @@ build:
 	mkdir -p $(OBJ_DIR)
 
 shared: build $(OBJS)
-	$(CPP) $(CPPFLAGS) $(INCLUDES) -o $(SHARED_LIB) $(OBJS) $(LFLAGS) $(LIBS)
+	$(CPP) $(CPPFLAGS) $(INCLUDES) -o $(OBJ_DIR)/$(SHARED_LIB) $(OBJS) $(LFLAGS) $(LIBS)
 
 static: build $(OBJS)
-	$(AR) rcs $(STATIC_LIB) $(OBJS)
+	$(AR) rcs $(OBJ_DIR)/$(STATIC_LIB) $(OBJS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) $(OBJS) $(SHARED_LIB) $(STATIC_LIB) *~
+	$(RM) $(OBJS) $(OBJ_DIR)/$(SHARED_LIB) $(OBJ_DIR)/$(STATIC_LIB) *~
 	$(MAKE) -C $(EXAMPLE) clean
 
 # define install directories
@@ -80,8 +82,8 @@ endif
 
 install: all
 	install -d $(PREFIX)/lib/ 
-	install -m 644 $(STATIC_LIB) $(PREFIX)/lib/
-	install -m 644 $(SHARED_LIB) $(PREFIX)/lib/
+	install -m 644 $(OBJ_DIR)/$(STATIC_LIB) $(PREFIX)/lib/$(STATIC_LIB)
+	install -m 755 $(OBJ_DIR)/$(SHARED_LIB) $(PREFIX)/lib/$(SHARED_LIB).$(LIB_VERSION)
 
 docs:
 	doxygen Doxyfile
