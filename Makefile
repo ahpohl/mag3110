@@ -82,8 +82,8 @@ endif
 
 install: all
 	install -d $(PREFIX)/lib
-	install -m 644 $(OBJ_DIR)/$(STATIC_LIB) $(DESTDIR)/$(PREFIX)/lib/$(STATIC_LIB)
-	install -m 755 $(OBJ_DIR)/$(SHARED_LIB) $(DESTDIR)/$(PREFIX)/lib/$(SHARED_LIB).$(LIB_VERSION)
+	install -m 644 $(OBJ_DIR)/$(STATIC_LIB) $(DESTDIR)$(PREFIX)/lib/$(STATIC_LIB)
+	install -m 755 $(OBJ_DIR)/$(SHARED_LIB) $(DESTDIR)$(PREFIX)/lib/$(SHARED_LIB).$(LIB_VERSION)
 
 docs:
 	doxygen Doxyfile
