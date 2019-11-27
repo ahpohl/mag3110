@@ -27,14 +27,14 @@ EXECS = $(OBJS:%.o=%)
 
 .PHONY: all clean
 
-all: $(OBJS)
+all: $(OBJS) $(EXECS)
 
 .cpp.o:
-	$(CPP) $(CPPFLAGS) $(INCLUDES) $< -o $@
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $< -o $(BUILD)/$@
 
-.o.:
-	$(CPP) $< $(LFLAGS) $(LIBS) -o $@
+.o:
+	$(CPP) $(BUILD)/$< $(LFLAGS) $(LIBS) -o $(BUILD)/$@
 
 clean:
-	-@ $(RM) *.o
-	-@ $(RM) $(EXECS)
+	-@ $(RM) $(BUILD)/*.o
+	-@ $(RM) $(BUILD)/$(EXECS)
