@@ -18,11 +18,22 @@ int main(int argc, char** argv)
   mag.reset();
 
   int bx, by, bz;
-  mag.getMag(&bx, &by, &bz);
+  mag.getOffset(&bx, &by, &bz);
+  cout << "Offset: ";
   mag.displayMag(bx, by, bz);
+
+  mag.getMag(&bx, &by, &bz);
+  cout << "Mag:    ";
+  mag.displayMag(bx, by, bz);
+
   mag.setOffset(bx, by, bz);
+  mag.getOffset(&bx, &by, &bz);
+  cout << "Offset: ";
+  mag.displayMag(bx, by, bz);
+
   mag.triggerMeasurement();
   mag.getMag(&bx, &by, &bz);
+  cout << "Mag:    ";
   mag.displayMag(bx, by, bz);
 
   return 0;
