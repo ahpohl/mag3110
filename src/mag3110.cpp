@@ -316,8 +316,8 @@ int MAG3110::getDelay(void) const
   return m_delay;
 }
 
-void MAG3110::setOffset(int16_t const& t_xoff, int16_t const&  t_yoff, 
-  int16_t const& t_zoff) const
+void MAG3110::setOffset(int const& t_xoff, int const&  t_yoff, 
+  int const& t_zoff) const
 {
   // msb
   writeRegister(MAG3110_X_AXIS + 0x08, (t_xoff >> 7) & 0xFF);
@@ -329,7 +329,7 @@ void MAG3110::setOffset(int16_t const& t_xoff, int16_t const&  t_yoff,
   writeRegister(MAG3110_Z_AXIS + 0x09, (t_zoff << 1) & 0xFF);
 }
 
-void MAG3110::getOffset(int16_t* t_bxoff, int16_t* t_byoff, int16_t* t_bzoff) const
+void MAG3110::getOffset(int* t_bxoff, int* t_byoff, int* t_bzoff) const
 {
   uint8_t msb, lsb;
   msb = readRegister(MAG3110_X_AXIS + 0x08);

@@ -2,16 +2,16 @@
 CPP = g++
 
 # define any compile-time flags
-CPPFLAGS = -Wall -g -std=c++11 -pthread -c
+CPPFLAGS = -Wall -g -std=c++11 -pthread
 
 # define any directories containing header files other than /usr/include
 INCLUDES = -I../include
 
-# define build directory
-BUILD = ../build
+# define examples build directory
+BUILD = build
 
 # define library paths in addition to /usr/lib
-LFLAGS = -L$(BUILD)
+LFLAGS = -L../build
 
 # define any libraries to link into executable:
 LIBS = -Wl,-Bstatic -lmag3110 -Wl,-Bdynamic -lwiringPi
@@ -20,21 +20,23 @@ LIBS = -Wl,-Bstatic -lmag3110 -Wl,-Bdynamic -lwiringPi
 SRCS = $(wildcard *.cpp)
 
 # define object files
-OBJS = $(SRCS:.cpp=.o)
+OBJS = $(patsubst %.cpp,$(BUILD)/%.o,$(SRCS))
 
-# define executables
-EXECS = $(OBJS:%.o=%)
+# define apps
+APPS = $(patsubst $(BUILD)/%.o,$(BUILD)/%,$(OBJS))
 
-.PHONY: all clean
+.PHONY: all clean build
 
-all: $(OBJS) $(EXECS)
+all: build $(OBJS) $(APPS)
 
-.cpp.o:
-	$(CPP) $(CPPFLAGS) $(INCLUDES) $< -o $(BUILD)/$@
+$(BUILD)/%: $(BUILD)/%.o
+	$(CPP) $< $(LFLAGS) $(LIBS) -o $@
 
-.o:
-	$(CPP) $(BUILD)/$< $(LFLAGS) $(LIBS) -o $(BUILD)/$@
+$(BUILD)/%.o: %.cpp
+	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+
+build:
+	-@ mkdir -p $(BUILD)
 
 clean:
-	-@ $(RM) $(BUILD)/*.o
-	-@ $(RM) $(BUILD)/$(EXECS)
+	-@ $(RM) $(OBJS) $(APPS)

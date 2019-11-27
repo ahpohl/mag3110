@@ -72,7 +72,7 @@ OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 all: shared static
 
 build:
-	mkdir -p $(OBJ_DIR)
+	-@ mkdir -p $(OBJ_DIR)
 
 shared: build $(OBJS)
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -o $(OBJ_DIR)/$(SHARED_LIB) $(OBJS) $(LFLAGS) $(LIBS)
@@ -84,8 +84,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CPP) $(CPPFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) $(OBJS) $(OBJ_DIR)/$(SHARED_LIB) $(OBJ_DIR)/$(STATIC_LIB) *~
-	$(MAKE) -C $(EXAMPLE) clean
+	-@ $(RM) $(OBJS) $(OBJ_DIR)/$(SHARED_LIB) $(OBJ_DIR)/$(STATIC_LIB) *~
+	-@ $(MAKE) -C $(EXAMPLE) clean
 
 # define install directories
 ifeq ($(PREFIX),)

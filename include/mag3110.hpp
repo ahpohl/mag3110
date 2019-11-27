@@ -375,8 +375,8 @@ public:
       @see getOffset()
       @see calibrate()     
       */
-  void setOffset(int16_t const& t_bxoff, int16_t const& t_byoff, 
-    int16_t const& t_bzoff) const;
+  void setOffset(int const& t_bxoff, int const& t_byoff, 
+    int const& t_bzoff) const;
   /** @brief Get magnetic offset
       
       This function gets the user magnetic offsets.
@@ -387,7 +387,7 @@ public:
       @see setOffset()
       @see calibrate()
       */
-  void getOffset(int16_t* t_bxoff, int16_t* t_byoff, int16_t* t_bzoff) const;
+  void getOffset(int* t_bxoff, int* t_byoff, int* t_bzoff) const;
   /** @brief Calibrate magnetic reading
     
       This function calibrates the magnetic readings of the chip. The initial

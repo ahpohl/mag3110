@@ -20,7 +20,7 @@ int main(int argc, char** argv)
   mag.calibrate();
   mag.start();
 
-  int16_t bxoff, byoff, bzoff;
+  int bxoff, byoff, bzoff;
   mag.getOffset(&bxoff, &byoff, &bzoff);
   cout << "Offsets: " << bxoff << ", " << byoff << ", " << bzoff << endl;
 
