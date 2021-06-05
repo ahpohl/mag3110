@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/ahpohl/mag3110.svg?branch=master)](https://travis-ci.com/ahpohl/mag3110)
 # A C++ library for the SparkFun 3-axis magnetometer breakout board
 
 The MAG3110 library has been derived from the [Sparkfun Arduino library][1] and ported to C++ to allow embedded devices such as the Raspberry Pi with an I<SUP>2</SUP>C bus to use the breakout board directly. It uses much of the same API as the original library. However, a couple of methods have been renamed, added or removed. The complete [documentation][2] of the MAG3110 class and its methods can be found [here][2] including some basic examples to get you started.
